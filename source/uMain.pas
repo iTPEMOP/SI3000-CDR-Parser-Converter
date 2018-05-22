@@ -30,6 +30,10 @@ type
     btnS2: TToolButton;
     btnSettings: TToolButton;
     procedure aplctnvntsMainHint(Sender: TObject);
+    procedure actExitExecute(Sender: TObject);
+    procedure actOpenExecute(Sender: TObject);
+    procedure actSaveLogExecute(Sender: TObject);
+    procedure actSettingsExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,5 +60,24 @@ begin
     sbpBottom.Panels[SBP_HINT].Text := '';
 end;
 
+procedure TfrmMain.actExitExecute(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmMain.actOpenExecute(Sender: TObject);
+begin
+  // Open file
+end;
+
+procedure TfrmMain.actSaveLogExecute(Sender: TObject);
+begin
+  // save log
+end;
+
+procedure TfrmMain.actSettingsExecute(Sender: TObject);
+begin
+  // settings dialog
+end;
 
 end.

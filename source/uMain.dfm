@@ -73,6 +73,7 @@ object frmMain: TfrmMain
       Caption = 'Open'
       Hint = 'Open|Open CS file'
       ImageIndex = 0
+      OnExecute = actOpenExecute
     end
     object actSaveLog: TAction
       Category = 'File'
@@ -80,18 +81,21 @@ object frmMain: TfrmMain
       Enabled = False
       Hint = 'Save|Save current log'
       ImageIndex = 2
+      OnExecute = actSaveLogExecute
     end
     object actExit: TAction
       Category = 'File'
       Caption = 'Exit'
       Hint = 'Exit|Exit program'
       ImageIndex = 4
+      OnExecute = actExitExecute
     end
     object actSettings: TAction
       Category = 'Service'
       Caption = 'Settings'
       Hint = 'Settings|Program settings'
       ImageIndex = 6
+      OnExecute = actSettingsExecute
     end
   end
   object mmTop: TMainMenu
