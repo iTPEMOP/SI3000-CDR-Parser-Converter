@@ -14,6 +14,22 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
+  object sbpBottom: TStatusBar
+    Left = 0
+    Top = 610
+    Width = 1297
+    Height = 19
+    Panels = <
+      item
+        Width = 296
+      end
+      item
+        Width = 20
+      end
+      item
+        Width = 50
+      end>
+  end
   object actlstMain: TActionList
     Left = 16
     Top = 16

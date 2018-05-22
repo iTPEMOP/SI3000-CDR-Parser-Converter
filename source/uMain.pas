@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ActnList;
+  Dialogs, Menus, ActnList, ComCtrls;
 
 type
   TfrmMain = class(TForm)
@@ -21,6 +21,7 @@ type
     mniSeparator1: TMenuItem;
     mniExit: TMenuItem;
     mniSettings: TMenuItem;
+    sbpBottom: TStatusBar;
   private
     { Private declarations }
   public
@@ -33,5 +34,10 @@ var
 implementation
 
 {$R *.dfm}
+
+const
+  SBP_HINT = 0;
+  SBP_STATUS = 1;
+  SBP_FILENAME = 2;
 
 end.
