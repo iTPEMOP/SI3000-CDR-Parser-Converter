@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ActnList, ComCtrls;
+  Dialogs, Menus, ActnList, ComCtrls, AppEvnts, ImgList, ToolWin;
 
 type
   TfrmMain = class(TForm)
@@ -22,6 +22,14 @@ type
     mniExit: TMenuItem;
     mniSettings: TMenuItem;
     sbpBottom: TStatusBar;
+    aplctnvntsMain: TApplicationEvents;
+    ilMain: TImageList;
+    tlbTop: TToolBar;
+    btnOpen: TToolButton;
+    btnSaveLog: TToolButton;
+    btnS2: TToolButton;
+    btnSettings: TToolButton;
+    procedure aplctnvntsMainHint(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,5 +47,14 @@ const
   SBP_HINT = 0;
   SBP_STATUS = 1;
   SBP_FILENAME = 2;
+
+procedure TfrmMain.aplctnvntsMainHint(Sender: TObject);
+begin
+  if Trim(Application.Hint) <> '' then
+    sbpBottom.Panels[SBP_HINT].Text := Application.Hint
+  else
+    sbpBottom.Panels[SBP_HINT].Text := '';
+end;
+
 
 end.
