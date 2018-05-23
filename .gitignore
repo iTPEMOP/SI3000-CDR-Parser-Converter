@@ -3,3 +3,6 @@ dcu
 
 # executable
 /*.exe
+
+# params
+/params.ini

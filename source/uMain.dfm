@@ -14,6 +14,7 @@ object frmMain: TfrmMain
   Font.Style = []
   Menu = mmTop
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object sbpBottom: TStatusBar
@@ -91,11 +92,28 @@ object frmMain: TfrmMain
       OnExecute = actExitExecute
     end
     object actSettings: TAction
-      Category = 'Service'
+      Category = 'Preferences'
       Caption = 'Settings'
       Hint = 'Settings|Program settings'
       ImageIndex = 6
       OnExecute = actSettingsExecute
+    end
+    object actEng: TAction
+      Category = 'Preferences'
+      AutoCheck = True
+      Caption = 'English'
+      Checked = True
+      GroupIndex = 1
+      Hint = 'English|Switch to english'
+      OnExecute = actEngExecute
+    end
+    object actRus: TAction
+      Category = 'Preferences'
+      AutoCheck = True
+      Caption = 'Russian'
+      GroupIndex = 1
+      Hint = 'Russian|Switch to russian'
+      OnExecute = actRusExecute
     end
   end
   object mmTop: TMainMenu
@@ -121,6 +139,20 @@ object frmMain: TfrmMain
       Caption = 'Preferences'
       object mniSettings: TMenuItem
         Action = actSettings
+      end
+      object mniLanguage: TMenuItem
+        Caption = 'Language'
+        object mniEng: TMenuItem
+          Action = actEng
+          AutoCheck = True
+          GroupIndex = 1
+        end
+        object mniRus: TMenuItem
+          Action = actRus
+          AutoCheck = True
+          GroupIndex = 1
+          RadioItem = True
+        end
       end
     end
   end
