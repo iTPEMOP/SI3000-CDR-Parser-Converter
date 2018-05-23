@@ -117,8 +117,8 @@ object frmMain: TfrmMain
         Action = actExit
       end
     end
-    object mniService: TMenuItem
-      Caption = 'Service'
+    object mniPreferences: TMenuItem
+      Caption = 'Preferences'
       object mniSettings: TMenuItem
         Action = actSettings
       end

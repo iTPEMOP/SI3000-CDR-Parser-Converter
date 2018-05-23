@@ -15,7 +15,7 @@ type
     actSettings: TAction;
     mmTop: TMainMenu;
     mniFile: TMenuItem;
-    mniService: TMenuItem;
+    mniPreferences: TMenuItem;
     mniOpen: TMenuItem;
     mniSaveLog: TMenuItem;
     mniSeparator1: TMenuItem;
