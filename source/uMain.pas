@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ActnList, ComCtrls, AppEvnts, ImgList, ToolWin;
+  Dialogs, Menus, ActnList, ComCtrls, AppEvnts, ImgList, ToolWin, StdCtrls;
 
 type
   TfrmMain = class(TForm)
@@ -34,6 +34,8 @@ type
     mniLanguage: TMenuItem;
     mniEng: TMenuItem;
     mniRus: TMenuItem;
+    mmoLog: TMemo;
+    dlgOpen: TOpenDialog;
     procedure aplctnvntsMainHint(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
@@ -59,7 +61,7 @@ implementation
 
 {$R *.dfm}
 
-uses IniFiles;
+uses IniFiles, Parser;
 
 const
   SBP_HINT = 0;
@@ -80,8 +82,26 @@ begin
 end;
 
 procedure TfrmMain.actOpenExecute(Sender: TObject);
+var
+  Parser: TParser;
 begin
   // Open file
+  if dlgOpen.Execute then
+  begin
+    Parser := TParser.Create(dlgOpen.FileName, mmoLog);
+    try
+      if Parser.PreFileCheck then
+      begin
+        Parser.ClearLog;
+        Parser.Log(Format('Begin parse file: %s.', [dlgOpen.FileName]));
+      end
+      else
+        Parser.Log(Format('%s is not valid SI3000 file.', [dlgOpen.FileName]));
+    finally
+
+    end;
+  end;
+
 end;
 
 procedure TfrmMain.actSaveLogExecute(Sender: TObject);
@@ -110,6 +130,7 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   CheckI18N;
   InitInterface;
+  mmoLog.Align := alClient;
 end;
 
 procedure TfrmMain.CheckI18N;

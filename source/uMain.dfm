@@ -65,6 +65,22 @@ object frmMain: TfrmMain
       Action = actSettings
     end
   end
+  object mmoLog: TMemo
+    Left = 56
+    Top = 192
+    Width = 185
+    Height = 89
+    Color = clScrollBar
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Lucida Console'
+    Font.Style = []
+    ParentFont = False
+    ReadOnly = True
+    ScrollBars = ssVertical
+    TabOrder = 2
+  end
   object actlstMain: TActionList
     Images = ilMain
     Left = 24
@@ -567,5 +583,11 @@ object frmMain: TfrmMain
       800380038001800181E181E18001800181E181E180018001FF81FF8180018001
       FF81FF8180018001FF87FF87FFFFFFFF00000000000000000000000000000000
       000000000000}
+  end
+  object dlgOpen: TOpenDialog
+    DefaultExt = 'ama'
+    Filter = 'SI3000 files|*.ama|All files|*.*'
+    Left = 88
+    Top = 104
   end
 end
