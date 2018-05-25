@@ -61,7 +61,7 @@ implementation
 
 {$R *.dfm}
 
-uses IniFiles, Parser;
+uses IniFiles, Parser, I18NMessages;
 
 const
   SBP_HINT = 0;
@@ -93,10 +93,14 @@ begin
       if Parser.PreFileCheck then
       begin
         Parser.ClearLog;
-        Parser.Log(Format('Begin parse file: %s.', [dlgOpen.FileName]));
+        Parser.Log(Format(GetAMessage('BEGIN_PARSE', lang), [dlgOpen.FileName]));
       end
       else
-        Parser.Log(Format('%s is not valid SI3000 file.', [dlgOpen.FileName]));
+        Application.MessageBox(
+          PChar(Format(GetAMessage('IS_NOT_VALID_SI3000_FILE', lang), [dlgOpen.FileName])),
+          PChar(GetAMessage('WARNING', lang)),
+          MB_OK + MB_ICONWARNING
+        );
     finally
 
     end;
