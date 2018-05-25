@@ -252,6 +252,11 @@ begin
   finally
     IniFile.Free;
   end;
+
+  if lang = 'en' then
+    dlgOpen.Filter := 'SI3000 files|*.ama|All files|*.*'
+  else
+    dlgOpen.Filter := 'SI3000 פאיכû|*.ama|ֲסו פאיכû|*.*';
 end;
 
 function GetLang: string;

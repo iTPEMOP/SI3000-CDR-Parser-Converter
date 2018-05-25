@@ -588,6 +588,6 @@ object frmMain: TfrmMain
     DefaultExt = 'ama'
     Filter = 'SI3000 files|*.ama|All files|*.*'
     Left = 88
-    Top = 104
+    Top = 96
   end
 end
