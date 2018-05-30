@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ActnList, ComCtrls, AppEvnts, ImgList, ToolWin, StdCtrls;
+  Dialogs, Menus, ActnList, ComCtrls, AppEvnts, ImgList, ToolWin, StdCtrls,
+  Gauges;
 
 type
   TfrmMain = class(TForm)
@@ -36,6 +37,7 @@ type
     mniRus: TMenuItem;
     mmoLog: TMemo;
     dlgOpen: TOpenDialog;
+    gProgress: TGauge;
     procedure aplctnvntsMainHint(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
@@ -88,12 +90,32 @@ begin
   // Open file
   if dlgOpen.Execute then
   begin
-    Parser := TParser.Create(dlgOpen.FileName, mmoLog);
+    Parser := TParser.Create(dlgOpen.FileName, mmoLog, gProgress);
     try
       if Parser.PreFileCheck then
       begin
         Parser.ClearLog;
+        sbpBottom.Panels[SBP_FILENAME].Text := dlgOpen.FileName;
         Parser.Log(Format(GetAMessage('BEGIN_PARSE', lang), [dlgOpen.FileName]));
+        gProgress.Visible := True;
+        if Parser.Parse then
+        begin
+          Parser.Log(GetAMessage('PARSE_COMPLETED_SUCCESSFULLY', lang));
+          Application.MessageBox(
+            PChar(Format(GetAMessage('TOTAL_PARSED', lang), [Parser.RecCount])),
+            PChar(GetAMessage('INFORMATION', lang)),
+            MB_OK + MB_ICONINFORMATION
+        );
+        end
+        else
+        begin
+          //Parser.Log(GetAMessage('ERROR_DURING_PARSING', lang));
+          Application.MessageBox(
+          PChar(Format(GetAMessage('ERROR_DURING_PARSING', lang), [dlgOpen.FileName])),
+          PChar(GetAMessage('WARNING', lang)),
+          MB_OK + MB_ICONWARNING
+        );
+        end;
       end
       else
         Application.MessageBox(
@@ -102,7 +124,8 @@ begin
           MB_OK + MB_ICONWARNING
         );
     finally
-
+      Parser.Free;
+      gProgress.Visible := False;
     end;
   end;
 
@@ -135,6 +158,15 @@ begin
   CheckI18N;
   InitInterface;
   mmoLog.Align := alClient;
+  gProgress.Visible := False;
+  with gProgress do
+  begin
+    Parent := sbpBottom;
+    Top := 2;
+    Left := 1;
+    Height := sbpBottom.Height - Top;
+    Width := sbpBottom.Panels[0].Width - Left * 2;
+  end;
 end;
 
 procedure TfrmMain.CheckI18N;

@@ -17,6 +17,13 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object gProgress: TGauge
+    Left = 64
+    Top = 448
+    Width = 100
+    Height = 41
+    Progress = 0
+  end
   object sbpBottom: TStatusBar
     Left = 0
     Top = 610
