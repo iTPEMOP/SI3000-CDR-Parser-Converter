@@ -167,8 +167,39 @@ begin
 end;
 
 function TParser.ParseDateTimeChangesRecord(const RecData: array of Byte): Boolean;
+var
+  datetimeStr: string;
 begin
-  // Log(Format(GetAMessage('DATETIME_CHANGE_IS_FOUND', lang), [$d2]));
+  Log(Format(GetAMessage('DATETIME_CHANGE_IS_FOUND', lang), [$d2]));
+  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+    Format('%.*d', [2, RecData[0]]),
+    Format('%.*d', [2, RecData[1]]),
+    Format('%.*d', [2, RecData[2]]),
+    Format('%.*d', [2, RecData[3]]),
+    Format('%.*d', [2, RecData[4]]),
+    Format('%.*d', [2, RecData[5]]),
+    Format('%.*d', [1, RecData[6]])
+  ]);
+  Log(Format(GetAMessage('OLD_TIME', lang), [datetimeStr]));
+
+  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+    Format('%.*d', [2, RecData[7]]),
+    Format('%.*d', [2, RecData[8]]),
+    Format('%.*d', [2, RecData[9]]),
+    Format('%.*d', [2, RecData[10]]),
+    Format('%.*d', [2, RecData[11]]),
+    Format('%.*d', [2, RecData[12]]),
+    Format('%.*d', [1, RecData[13]])
+  ]);
+  Log(Format(GetAMessage('NEW_TIME', lang), [datetimeStr]));
+
+  case RecData[14] of
+    1: Log(GetAMessage('REASON_CLOCK_CORRECTION', lang));
+    2: Log(GetAMessage('REASON_SUMMER_WINTER_TIME', lang));
+    else
+      Log(GetAMessage('REASON_UNKNOWN', lang));
+  end;
+
   Result := True;
 end;
 
@@ -198,8 +229,8 @@ begin
     // Date and Time changes record $d2
     $d2:
     begin
-      SetLength(RecData, 16);
-      for I := 0 to 15 do
+      SetLength(RecData, 15);
+      for I := 0 to 14 do
         FS.Read(RecData[i], 1);
       Result := ParseDateTimeChangesRecord(RecData);
     end;
@@ -207,8 +238,8 @@ begin
     // Record of the lost of a certain amount of records
     $d3:
     begin
-      SetLength(RecData, 19);
-      for I := 0 to 18 do
+      SetLength(RecData, 18);
+      for I := 0 to 17 do
         FS.Read(RecData[i], 1);
       Result := ParseLossRecord(RecData);
     end;
@@ -216,8 +247,8 @@ begin
     // Reboot/restrart record
     $d4:
     begin
-      SetLength(RecData, 12);
-      for I := 0 to 11 do
+      SetLength(RecData, 11);
+      for I := 0 to 10 do
         FS.Read(RecData[i], 1);
       Result := ParseRebootRecord(RecData);
     end;
