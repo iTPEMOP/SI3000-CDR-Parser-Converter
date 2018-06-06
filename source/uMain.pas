@@ -38,6 +38,7 @@ type
     mmoLog: TMemo;
     dlgOpen: TOpenDialog;
     gProgress: TGauge;
+    dlgSave: TSaveDialog;
     procedure aplctnvntsMainHint(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
@@ -51,6 +52,7 @@ type
     procedure CheckI18N;
     procedure InitInterface;
     procedure SetLang(ALang: string);
+    procedure EnsureLogSaveEnabled;
   public
     { Public declarations }
   end;
@@ -105,17 +107,17 @@ begin
             PChar(Format(GetAMessage('TOTAL_PARSED', lang), [Parser.RecCount])),
             PChar(GetAMessage('INFORMATION', lang)),
             MB_OK + MB_ICONINFORMATION
-        );
+          );
         end
         else
         begin
-          //Parser.Log(GetAMessage('ERROR_DURING_PARSING', lang));
           Application.MessageBox(
-          PChar(Format(GetAMessage('ERROR_DURING_PARSING', lang), [dlgOpen.FileName])),
-          PChar(GetAMessage('WARNING', lang)),
-          MB_OK + MB_ICONWARNING
-        );
+            PChar(Format(GetAMessage('ERROR_DURING_PARSING', lang), [dlgOpen.FileName])),
+            PChar(GetAMessage('WARNING', lang)),
+            MB_OK + MB_ICONWARNING
+          );
         end;
+        EnsureLogSaveEnabled;
       end
       else
         Application.MessageBox(
@@ -133,7 +135,25 @@ end;
 
 procedure TfrmMain.actSaveLogExecute(Sender: TObject);
 begin
-  // save log
+  if mmoLog.Lines.Count > 0 then
+  begin
+    dlgSave.FileName := Format('log_%s_si3000_parser', [FormatDateTime('yyyy-mm-dd', Now)]);
+    if dlgSave.Execute then
+    begin
+      mmoLog.Lines.SaveToFile(dlgSave.FileName);
+      Application.MessageBox(
+        PChar(GetAMessage('LOG_HAS_BEEN_SAVED', lang)),
+        PChar(GetAMessage('INFORMATION', lang)),
+        MB_OK + MB_ICONINFORMATION
+      );
+    end;
+  end
+  else
+    Application.MessageBox(
+      PChar(GetAMessage('LOG_IS_EMPTY', lang)),
+      PChar(GetAMessage('WARNING', lang)),
+      MB_OK + MB_ICONWARNING
+    );
 end;
 
 procedure TfrmMain.actSettingsExecute(Sender: TObject);
@@ -290,9 +310,19 @@ begin
   end;
 
   if lang = 'en' then
-    dlgOpen.Filter := 'SI3000 files|*.ama|All files|*.*'
+  begin
+    dlgOpen.Filter := 'SI3000 files|*.ama|All files|*.*';
+    dlgOpen.Title := 'Open';
+    dlgSave.Filter := 'Text files|*.txt|All files|*.*';
+    dlgSave.Title := 'Save log to';
+  end
   else
+  begin
     dlgOpen.Filter := 'SI3000 файлы|*.ama|Все файлы|*.*';
+    dlgOpen.Title := 'Открыть';
+    dlgSave.Filter := 'Текстовые файлы|*.txt|Все файлы|*.*';
+    dlgSave.Title := 'Сохранить лог в файл';
+  end;
 end;
 
 function GetLang: string;
@@ -313,6 +343,11 @@ begin
   finally
     IniFile.Free;
   end;
+end;
+
+procedure TfrmMain.EnsureLogSaveEnabled;
+begin
+  actSaveLog.Enabled := mmoLog.Lines.Count > 0;
 end;
 
 initialization

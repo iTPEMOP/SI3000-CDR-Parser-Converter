@@ -4,7 +4,7 @@ unit I18NMessages;
 interface
 
 const
-  CONST_NAMES: array[0..39] of string = (
+  CONST_NAMES: array[0..43] of string = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -47,9 +47,13 @@ const
     'TOTAL_PARSED_en',
     'TOTAL_PARSED_ru',
     'ERROR_DURING_PARSING_en',
-    'ERROR_DURING_PARSING_ru'
+    'ERROR_DURING_PARSING_ru',
+    'LOG_IS_EMPTY_en',
+    'LOG_IS_EMPTY_ru',
+    'LOG_HAS_BEEN_SAVED_en',
+    'LOG_HAS_BEEN_SAVED_ru'
   );
-  CONST_VALUES: array[0..39] of string = (
+  CONST_VALUES: array[0..43] of string = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -90,7 +94,11 @@ const
     'Total parsed %d records.',
     'Всего обработано %d записей.',
     'An error occurred during parsing file "%s"! The file is corrupted probably.',
-    'Произошла ошибка при анализе файла "%s"! Возможно файл поврежден.'
+    'Произошла ошибка при анализе файла "%s"! Возможно файл поврежден.',
+    'Log is empty!',
+    'Лог работы парсера пуст!',
+    'Log has been saved.',
+    'Лог работы парсера сохранен успешно.'
   );
 
 function GetAMessage(AName, ALang: string): string;

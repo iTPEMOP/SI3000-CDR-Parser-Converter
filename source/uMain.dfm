@@ -597,4 +597,11 @@ object frmMain: TfrmMain
     Left = 88
     Top = 96
   end
+  object dlgSave: TSaveDialog
+    DefaultExt = 'txt'
+    Filter = 'Text files|*.txt|All files|*.*'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
+    Left = 144
+    Top = 96
+  end
 end
