@@ -204,8 +204,40 @@ begin
 end;
 
 function TParser.ParseLossRecord(const RecData: array of Byte): Boolean;
+var
+  datetimeStr: string;
+  lossRecordCount: LongInt;
 begin
-//
+  Log(Format(GetAMessage('LOSS_RECORD_IS_FOUND', lang), [$d3]));
+  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+    Format('%.*d', [2, RecData[0]]),
+    Format('%.*d', [2, RecData[1]]),
+    Format('%.*d', [2, RecData[2]]),
+    Format('%.*d', [2, RecData[3]]),
+    Format('%.*d', [2, RecData[4]]),
+    Format('%.*d', [2, RecData[5]]),
+    Format('%.*d', [1, RecData[6]])
+  ]);
+  Log(Format(GetAMessage('LOSS_START_TIME', lang), [datetimeStr]));
+
+  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+    Format('%.*d', [2, RecData[7]]),
+    Format('%.*d', [2, RecData[8]]),
+    Format('%.*d', [2, RecData[9]]),
+    Format('%.*d', [2, RecData[10]]),
+    Format('%.*d', [2, RecData[11]]),
+    Format('%.*d', [2, RecData[12]]),
+    Format('%.*d', [1, RecData[13]])
+  ]);
+  Log(Format(GetAMessage('LOSS_END_TIME', lang), [datetimeStr]));
+
+  lossRecordCount :=
+    RecData[14] shl 3 +
+    RecData[15] shl 2 +
+    RecData[16] shl 1 +
+    RecData[17];
+  Log(Format(GetAMessage('TOTAL_RECORDS_ARE_LOST', lang), [lossRecordCount]));
+
   Result := True;
 end;
 

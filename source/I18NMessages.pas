@@ -4,7 +4,7 @@ unit I18NMessages;
 interface
 
 const
-  CONST_NAMES: array[0..27] of string = (
+  CONST_NAMES: array[0..35] of string = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -24,6 +24,14 @@ const
     'REASON_SUMMER_WINTER_TIME_ru',
     'REASON_UNKNOWN_en',
     'REASON_UNKNOWN_ru',
+    'LOSS_RECORD_IS_FOUND_en',
+    'LOSS_RECORD_IS_FOUND_ru',
+    'LOSS_START_TIME_en',
+    'LOSS_START_TIME_ru',
+    'LOSS_END_TIME_en',
+    'LOSS_END_TIME_ru',
+    'TOTAL_RECORDS_ARE_LOST_en',
+    'TOTAL_RECORDS_ARE_LOST_ru',
 
   { Warnings }
     'WARNING_en',
@@ -37,7 +45,7 @@ const
     'ERROR_DURING_PARSING_en',
     'ERROR_DURING_PARSING_ru'
   );
-  CONST_VALUES: array[0..27] of string = (
+  CONST_VALUES: array[0..35] of string = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -56,6 +64,14 @@ const
     '    Причина: переход на летнее/зимнее время.',
     '    Reason: unknown.',
     '    Причина: не определена.',
+    'Loss record is found (%d).',
+    'Найдена запись о потере определенного числа записей (%d).',
+    '    Start time: %s.',
+    '    Начало потерь: %s.',
+    '    End time: %s',
+    '    Окончание потерь: %s',
+    '    Total records are lost: %d.',
+    '    Всего записей потеряно: %d.',
 
     'Warning',
     'Предупреждение',
