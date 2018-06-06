@@ -242,8 +242,21 @@ begin
 end;
 
 function TParser.ParseRebootRecord(const RecData: array of Byte): Boolean;
+var
+  datetimeStr: string;
 begin
-//
+  Log(Format(GetAMessage('REBOOT_RECORD_IS_FOUND', lang), [$d3]));
+  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+    Format('%.*d', [2, RecData[0]]),
+    Format('%.*d', [2, RecData[1]]),
+    Format('%.*d', [2, RecData[2]]),
+    Format('%.*d', [2, RecData[3]]),
+    Format('%.*d', [2, RecData[4]]),
+    Format('%.*d', [2, RecData[5]]),
+    Format('%.*d', [1, RecData[6]])
+  ]);
+  Log(Format(GetAMessage('REBOOT_TIME', lang), [datetimeStr]));
+
   Result := True;
 end;
 

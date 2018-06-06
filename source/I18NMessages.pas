@@ -4,7 +4,7 @@ unit I18NMessages;
 interface
 
 const
-  CONST_NAMES: array[0..35] of string = (
+  CONST_NAMES: array[0..39] of string = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -32,6 +32,10 @@ const
     'LOSS_END_TIME_ru',
     'TOTAL_RECORDS_ARE_LOST_en',
     'TOTAL_RECORDS_ARE_LOST_ru',
+    'REBOOT_RECORD_IS_FOUND_en',
+    'REBOOT_RECORD_IS_FOUND_ru',
+    'REBOOT_TIME_en',
+    'REBOOT_TIME_ru',
 
   { Warnings }
     'WARNING_en',
@@ -45,7 +49,7 @@ const
     'ERROR_DURING_PARSING_en',
     'ERROR_DURING_PARSING_ru'
   );
-  CONST_VALUES: array[0..35] of string = (
+  CONST_VALUES: array[0..39] of string = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -72,6 +76,10 @@ const
     '    Окончание потерь: %s',
     '    Total records are lost: %d.',
     '    Всего записей потеряно: %d.',
+    'Reboot record is found (%d).',
+    'Найдена запись о перезагрузке коммутатора (%d).',
+    '    Reboot time: %s',
+    '    Время перезагрузки: %s',
 
     'Warning',
     'Предупреждение',
@@ -82,7 +90,7 @@ const
     'Total parsed %d records.',
     'Всего обработано %d записей.',
     'An error occurred during parsing file "%s"! The file is corrupted probably.',
-    'Произошда ошибка при анализе файла "%s"! Возможно файл поврежден.'
+    'Произошла ошибка при анализе файла "%s"! Возможно файл поврежден.'
   );
 
 function GetAMessage(AName, ALang: string): string;
