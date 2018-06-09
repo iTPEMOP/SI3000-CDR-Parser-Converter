@@ -48,13 +48,10 @@ type
     procedure actRusExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
     procedure CheckI18N;
     procedure InitInterface;
     procedure SetLang(ALang: string);
     procedure EnsureLogSaveEnabled;
-  public
-    { Public declarations }
   end;
 
 var
@@ -65,7 +62,7 @@ implementation
 
 {$R *.dfm}
 
-uses IniFiles, Parser, I18NMessages;
+uses IniFiles, Parser, I18NMessages, uSettings;
 
 const
   SBP_HINT = 0;
@@ -158,7 +155,17 @@ end;
 
 procedure TfrmMain.actSettingsExecute(Sender: TObject);
 begin
-  // settings dialog
+  frmSettings := TfrmSettings.Create(Application);
+  try
+    if frmSettings.ShowModal = mrOK then
+      frmSettings.SaveSettings;
+   finally
+    {
+      Ensure destroy frmSettings.
+      Needs at TSfrmSettingsForm.InitInterface for correct form name value.
+    }
+    frmSettings.Free;
+  end;
 end;
 
 procedure TfrmMain.actEngExecute(Sender: TObject);
@@ -257,6 +264,79 @@ begin
       IniFile.WriteString('en', 'frmMain_actRus_Hint', 'Russian|Switch to Russian');
     if not IniFile.ValueExists('ru', 'frmMain_actRus_Hint') then
       IniFile.WriteString('ru', 'frmMain_actRus_Hint', 'Русский|Переключить на русский');
+
+    // Settings form elements
+    if not IniFile.ValueExists('en', 'frmSettings_btnSave_Caption') then
+      IniFile.WriteString('en', 'frmSettings_btnSave_Caption', 'Save');
+    if not IniFile.ValueExists('ru', 'frmSettings_btnSave_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_btnSave_Caption', 'Сохранить');
+    if not IniFile.ValueExists('en', 'frmSettings_btnCancel_Caption') then
+      IniFile.WriteString('en', 'frmSettings_btnCancel_Caption', 'Cancel');
+    if not IniFile.ValueExists('ru', 'frmSettings_btnCancel_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_btnCancel_Caption', 'Отмена');
+    if not IniFile.ValueExists('en', 'frmSettings_lblPathHint_Caption') then
+      IniFile.WriteString('en', 'frmSettings_lblPathHint_Caption', '(HINT: If not specified, the export file will be saved in the same folder where the source *.ama file.)');
+    if not IniFile.ValueExists('ru', 'frmSettings_lblPathHint_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_lblPathHint_Caption', '(ПОДСКАЗКА: Если путь не указан, файл экспорта будет сохранен в той же папке, где исходный ama-файл.)');
+    if not IniFile.ValueExists('en', 'frmSettings_rgLogLevel_Caption') then
+      IniFile.WriteString('en', 'frmSettings_rgLogLevel_Caption', 'Log level');
+    if not IniFile.ValueExists('ru', 'frmSettings_rgLogLevel_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_rgLogLevel_Caption', 'Лог работы парсера');
+    if not IniFile.ValueExists('en', 'frmSettings_grpExportFields_Caption') then
+      IniFile.WriteString('en', 'frmSettings_grpExportFields_Caption', 'Export fields');
+    if not IniFile.ValueExists('ru', 'frmSettings_grpExportFields_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_grpExportFields_Caption', 'Экспортируемые поля');
+    if not IniFile.ValueExists('en', 'frmSettings_lbledtExportPath_Caption') then
+      IniFile.WriteString('en', 'frmSettings_lbledtExportPath_Caption', 'Export path');
+    if not IniFile.ValueExists('ru', 'frmSettings_lbledtExportPath_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_lbledtExportPath_Caption', 'Путь для файлов экспорта');
+    if not IniFile.ValueExists('en', 'frmSettingd_chkExportCSV_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkExportCSV_Caption', 'Enable export to csv-formatted file');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkExportCSV_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkExportCSV_Caption', 'Разрешить экспорт в csv-файл');
+    if not IniFile.ValueExists('en', 'frmSettings_chkNumber_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkNumber_Caption', 'Account number');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkNumber_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkNumber_Caption', 'Номер абонента');
+    if not IniFile.ValueExists('en', 'frmSettings_chkDestNumber_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkDestNumber_Caption', 'Destination number');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkDestNumber_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkDestNumber_Caption', 'Вызываемый номер');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCallStarts_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCallStarts_Caption', 'Call starts time');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCallStarts_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCallStarts_Caption', 'Время начала вызова');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCallEnds_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCallEnds_Caption', 'Call ends time');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCallEnds_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCallEnds_Caption', 'Время окончания вызова');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCallDuration_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCallDuration_Caption', 'Call duration, sec.');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCallDuration_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCallDuration_Caption', 'Продолжительность вызова, сек.');
+    if not IniFile.ValueExists('en', 'frmSettings_chkRecordIndex_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkRecordIndex_Caption', 'Record index');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordIndex_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkRecordIndex_Caption', 'Индекс записи');
+    if not IniFile.ValueExists('en', 'frmSettings_chkRecordID_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkRecordID_Caption', 'Record ID');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordID_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkRecordID_Caption', 'ID записи');
+    if not IniFile.ValueExists('en', 'frmSettings_chkRecordFlags_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkRecordFlags_Caption', 'Record flags');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordFlags_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkRecordFlags_Caption', 'Флаги записи');
+
+
+    if not IniFile.ValueExists('en', 'frmSettings_btnSave_Hint') then
+      IniFile.WriteString('en', 'frmSettings_btnSave_Hint', '|Save settings and close window');
+    if not IniFile.ValueExists('ru', 'frmSettings_btnSave_Hint') then
+      IniFile.WriteString('ru', 'frmSettings_btnSave_Hint', '|Сохранить настройки и закрыть окно');
+    if not IniFile.ValueExists('en', 'frmSettings_btnCancel_Hint') then
+      IniFile.WriteString('en', 'frmSettings_btnCancel_Hint', '|Cancel without saving');
+    if not IniFile.ValueExists('ru', 'frmSettings_btnCancel_Hint') then
+      IniFile.WriteString('ru', 'frmSettings_btnCancel_Hint', 'Закрыть окно без сохранения изменений');
+
   finally
     IniFile.Free;
   end;
@@ -290,11 +370,13 @@ begin
       begin
         (Components[i] as TAction).Caption := IniFile.ReadString(
           lang,
-          name + '_' + Components[i].name + '_Caption', (Components[i] as TAction).Caption
+          Name + '_' + Components[i].Name + '_Caption',
+          (Components[i] as TAction).Caption
         );
         (Components[i] as TAction).Hint := IniFile.ReadString(
           lang,
-          name + '_' + Components[i].name + '_Hint', (Components[i] as TAction).Hint
+          Name + '_' + Components[i].Name + '_Hint',
+          (Components[i] as TAction).Hint
         );
       end;
 
@@ -302,7 +384,8 @@ begin
         if (Components[i] as TMenuItem).Action = nil then
           (Components[i] as TMenuItem).Caption := IniFile.ReadString(
             lang,
-            name + '_' + Components[i].name + '_Caption', (Components[i] as TMenuItem).Caption
+            Name + '_' + Components[i].Name + '_Caption',
+            (Components[i] as TMenuItem).Caption
           );
     end;
   finally

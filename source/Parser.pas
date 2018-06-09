@@ -5,39 +5,79 @@ interface
 uses SysUtils, StdCtrls, Classes, Gauges;
 
 const
-    AvgRecLength: Byte = 134;
+  LOG_SECTION_NAME: string = 'Log';
+  EXPORT_SECTION_NAME: string = 'Export';
+  FIELDS_SECTION_NAME: string = 'Export fields';
+  LOG_LEVEL_KEY_NAME: string = 'Log level';
+  ENABLE_EXPORT_KEY_NAME: string = 'Enable export';
+  EXPORT_PATH_KEY_NAME: string = 'Path';
+  ACCOUNT_NUMBER: string = 'Account number';
+  DEST_NUMBER: string = 'Destination number';
+  START_TIME: string = 'Call starts';
+  DURATION: string = 'Call duration';
+  END_TIME: string = 'Call ends';
+  RECORD_INDEX: string = 'Record index';
+  RECORD_ID: string = 'Record ID';
+  RECORD_FLAGS: string = 'Record flags';
+
+  AvgRecLength: Byte = 134;
 
 type
   TParser = class
     private
+      // Parser settings
+      FIsExportEnable: Boolean;
+      FExportPath: string;
+      FIsAccountNumberExports: Boolean;
+      FIsDestNumberExports: Boolean;
+      FIsStartDateTimeExports: Boolean;
+      FIsDurationExports: Boolean;
+      FIsEndDateTimeExports: Boolean;
+      FIsIndexExports: Boolean;
+      FIsIDExports: Boolean;
+      FIsFlagsExports: Boolean;
+      FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
+
       FFileName: string;
       FS: TFileStream;  // stream for parsing file
       FIsFSEnd: Boolean;
 
-      FExportPath: String;
       FLogControl: TMemo;
       FProgressControl:TGauge;
-      FIsExportEnable: Boolean;
       FRecCount: Integer;
       FProgress: Integer;
       function SetExportFileName: string;
       function GetExportPath: string;
       procedure SetExportPath(const APath: string);
+      function GetLogLevel: Byte;
+      procedure SetLogLevel(const ALevel: Byte);
       function ParseRecord(Progress: Integer; var ExportLine: string): Boolean;
       function ParseDateTimeChangesRecord(const RecData: array of Byte): Boolean;
       function ParseLossRecord(const RecData: array of Byte): Boolean;
       function ParseRebootRecord(const RecData: array of Byte): Boolean;
       function ParseCallRecord(const RecData: array of Byte): Boolean;
+      procedure InitParams;
     public
       constructor Create(AFileName: string; ALogControl: TMemo; AGauge: TGauge);
+      procedure SaveParams;
       function PreFileCheck: Boolean;
       procedure Log(AMessage: string);
       procedure BrodcastProgress(AProgress: Integer);
       procedure ClearLog;
       function Parse: Boolean;
 
+      property LogLevel: Byte read GetLogLevel write SetLogLevel;
       property IsExportEnable: Boolean read FIsExportEnable write FIsExportEnable;
       property ExportPath: String read GetExportPath write SetExportPath;
+      property IsAccountNumberExports: Boolean read FIsAccountNumberExports write FIsAccountNumberExports;
+      property IsDestNumberExports: Boolean read FIsDestNumberExports write FIsDestNumberExports;
+      property IsStartTimeExports: Boolean read FIsStartDateTimeExports write FIsStartDateTimeExports;
+      property IsDurationExports: Boolean read FIsDurationExports write FIsDurationExports;
+      property IsEndTimeExports: Boolean read FIsEndDateTimeExports write FIsEndDateTimeExports;
+      property IsIndexExports: Boolean read FIsIndexExports write FIsIndexExports;
+      property IsIDExports: Boolean read FIsIDExports write FIsIDExports;
+      property IsFlagsExports: Boolean read FIsFlagsExports write FIsFlagsExports;
+
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
   end;
@@ -46,7 +86,7 @@ implementation
 
 { TParser }
 
-uses I18NMessages, uMain;
+uses I18NMessages, uMain, IniFiles;
 
 procedure TParser.ClearLog;
 begin
@@ -59,7 +99,67 @@ begin
   FLogControl := ALogControl;
   FProgressControl := AGauge;
   FRecCount:= 0;
-  FIsExportEnable := False;
+  FIsExportEnable := True;
+  InitParams;
+end;
+
+procedure TParser.InitParams;
+var
+  Ini: TIniFile;
+begin
+  FLogLevel := 2;
+  Ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'params.ini');
+  if FileExists(ExtractFilePath(ParamStr(0)) + 'params.ini') then
+  begin
+    FLogLevel := Ini.ReadInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, 2);
+    FIsExportEnable := Ini.ReadBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, True);
+    FExportPath := Ini.ReadString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, '');
+    FIsAccountNumberExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, True);
+    FIsDestNumberExports := Ini.ReadBool(FIELDS_SECTION_NAME, DEST_NUMBER, True);
+    FIsStartDateTimeExports := Ini.ReadBool(FIELDS_SECTION_NAME, START_TIME, True);
+    FIsDurationExports := Ini.ReadBool(FIELDS_SECTION_NAME, DURATION, True);
+    FIsEndDateTimeExports := Ini.ReadBool(FIELDS_SECTION_NAME, END_TIME, False);
+    FIsIndexExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_INDEX, False);
+    FIsIDExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_ID, False);
+    FIsFlagsExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_FLAGS, False);
+  end
+  else
+  begin
+    Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
+    Ini.WriteBool(EXPORT_SECTION_NAME,ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
+    Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsAccountNumberExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsDestNumberExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsStartDateTimeExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDurationExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEndDateTimeExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsIndexExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsIDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFlagsExports);
+  end;
+  Ini.Free;
+end;
+
+procedure TParser.SaveParams;
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'params.ini');
+  try
+    Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
+    Ini.WriteBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
+    Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsAccountNumberExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsDestNumberExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsStartDateTimeExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDurationExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEndDateTimeExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsIndexExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsIDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFlagsExports);
+  finally
+    Ini.Free;
+  end;
 end;
 
 function TParser.GetExportPath: string;
@@ -321,5 +421,15 @@ begin
   Result := True;
 end;
 
+function TParser.GetLogLevel: Byte;
+begin
+  Result := FLogLevel;
+end;
+
+procedure TParser.SetLogLevel(const ALevel: Byte);
+begin
+  if ALevel <> FLogLevel then
+    FLogLevel := ALevel;
+end;
 
 end.

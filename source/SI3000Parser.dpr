@@ -4,7 +4,8 @@ uses
   Forms,
   uMain in 'uMain.pas' {frmMain},
   Parser in 'Parser.pas',
-  I18NMessages in 'I18NMessages.pas';
+  I18NMessages in 'I18NMessages.pas',
+  uSettings in 'uSettings.pas' {frmSettings};
 
 {$R *.res}
 
