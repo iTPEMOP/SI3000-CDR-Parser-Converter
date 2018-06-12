@@ -4,7 +4,7 @@ unit I18NMessages;
 interface
 
 const
-  CONST_NAMES: array[0..43] of string = (
+  CONST_NAMES: array[0..47] of string = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -36,6 +36,10 @@ const
     'REBOOT_RECORD_IS_FOUND_ru',
     'REBOOT_TIME_en',
     'REBOOT_TIME_ru',
+    'CALL_DATA_RECORD_IS_FOUND_en',
+    'CALL_DATA_RECORD_IS_FOUND_ru',
+    'CDR_LENGTH_en',
+    'CDR_LENGTH_ru',
 
   { Warnings }
     'WARNING_en',
@@ -53,7 +57,7 @@ const
     'LOG_HAS_BEEN_SAVED_en',
     'LOG_HAS_BEEN_SAVED_ru'
   );
-  CONST_VALUES: array[0..43] of string = (
+  CONST_VALUES: array[0..47] of string = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -84,6 +88,10 @@ const
     'Найдена запись о перезагрузке коммутатора (%d).',
     '    Reboot time: %s',
     '    Время перезагрузки: %s',
+    'Call data racord is found (%d).',
+    'Найдена запись о вызове (%d).',
+    '  CDR length: %d bytes.',
+    '  Длина этой записи: %d байт.',
 
     'Warning',
     'Предупреждение',

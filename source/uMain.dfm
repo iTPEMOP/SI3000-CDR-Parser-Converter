@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 416
-  Top = 183
+  Left = 292
+  Top = 136
   Width = 1305
   Height = 675
   Caption = 'SI3000 Parser & Converter'
@@ -14,6 +14,7 @@ object frmMain: TfrmMain
   Font.Style = []
   Menu = mmTop
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

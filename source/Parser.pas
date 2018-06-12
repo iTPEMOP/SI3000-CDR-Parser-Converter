@@ -180,6 +180,16 @@ begin
   Result := FExportPath + FormatDateTime('yyyymmdd-hhmmss', Now) + '.csv';
 end;
 
+function TParser.GetLogLevel: Byte;
+begin
+  Result := FLogLevel;
+end;
+
+procedure TParser.SetLogLevel(const ALevel: Byte);
+begin
+  if ALevel <> FLogLevel then
+    FLogLevel := ALevel;
+end;
 
 procedure TParser.Log(AMessage: string);
 begin
@@ -270,34 +280,37 @@ function TParser.ParseDateTimeChangesRecord(const RecData: array of Byte): Boole
 var
   datetimeStr: string;
 begin
-  Log(Format(GetAMessage('DATETIME_CHANGE_IS_FOUND', lang), [$d2]));
-  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
-    Format('%.*d', [2, RecData[0]]),
-    Format('%.*d', [2, RecData[1]]),
-    Format('%.*d', [2, RecData[2]]),
-    Format('%.*d', [2, RecData[3]]),
-    Format('%.*d', [2, RecData[4]]),
-    Format('%.*d', [2, RecData[5]]),
-    Format('%.*d', [1, RecData[6]])
-  ]);
-  Log(Format(GetAMessage('OLD_TIME', lang), [datetimeStr]));
+  if LogLevel > 0 then
+  begin
+    Log(Format(GetAMessage('DATETIME_CHANGE_IS_FOUND', lang), [$d2]));
+    datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+      Format('%.*d', [2, RecData[0]]),
+      Format('%.*d', [2, RecData[1]]),
+      Format('%.*d', [2, RecData[2]]),
+      Format('%.*d', [2, RecData[3]]),
+      Format('%.*d', [2, RecData[4]]),
+      Format('%.*d', [2, RecData[5]]),
+      Format('%.*d', [1, RecData[6]])
+    ]);
+    Log(Format(GetAMessage('OLD_TIME', lang), [datetimeStr]));
 
-  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
-    Format('%.*d', [2, RecData[7]]),
-    Format('%.*d', [2, RecData[8]]),
-    Format('%.*d', [2, RecData[9]]),
-    Format('%.*d', [2, RecData[10]]),
-    Format('%.*d', [2, RecData[11]]),
-    Format('%.*d', [2, RecData[12]]),
-    Format('%.*d', [1, RecData[13]])
-  ]);
-  Log(Format(GetAMessage('NEW_TIME', lang), [datetimeStr]));
+    datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+      Format('%.*d', [2, RecData[7]]),
+      Format('%.*d', [2, RecData[8]]),
+      Format('%.*d', [2, RecData[9]]),
+      Format('%.*d', [2, RecData[10]]),
+      Format('%.*d', [2, RecData[11]]),
+      Format('%.*d', [2, RecData[12]]),
+      Format('%.*d', [1, RecData[13]])
+    ]);
+    Log(Format(GetAMessage('NEW_TIME', lang), [datetimeStr]));
 
-  case RecData[14] of
-    1: Log(GetAMessage('REASON_CLOCK_CORRECTION', lang));
-    2: Log(GetAMessage('REASON_SUMMER_WINTER_TIME', lang));
-    else
-      Log(GetAMessage('REASON_UNKNOWN', lang));
+    case RecData[14] of
+      1: Log(GetAMessage('REASON_CLOCK_CORRECTION', lang));
+      2: Log(GetAMessage('REASON_SUMMER_WINTER_TIME', lang));
+      else
+        Log(GetAMessage('REASON_UNKNOWN', lang));
+    end;
   end;
 
   Result := True;
@@ -308,35 +321,38 @@ var
   datetimeStr: string;
   lossRecordCount: LongInt;
 begin
-  Log(Format(GetAMessage('LOSS_RECORD_IS_FOUND', lang), [$d3]));
-  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
-    Format('%.*d', [2, RecData[0]]),
-    Format('%.*d', [2, RecData[1]]),
-    Format('%.*d', [2, RecData[2]]),
-    Format('%.*d', [2, RecData[3]]),
-    Format('%.*d', [2, RecData[4]]),
-    Format('%.*d', [2, RecData[5]]),
-    Format('%.*d', [1, RecData[6]])
-  ]);
-  Log(Format(GetAMessage('LOSS_START_TIME', lang), [datetimeStr]));
+  if LogLevel > 0 then
+  begin
+    Log(Format(GetAMessage('LOSS_RECORD_IS_FOUND', lang), [$d3]));
+    datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+      Format('%.*d', [2, RecData[0]]),
+      Format('%.*d', [2, RecData[1]]),
+      Format('%.*d', [2, RecData[2]]),
+      Format('%.*d', [2, RecData[3]]),
+      Format('%.*d', [2, RecData[4]]),
+      Format('%.*d', [2, RecData[5]]),
+      Format('%.*d', [1, RecData[6]])
+    ]);
+    Log(Format(GetAMessage('LOSS_START_TIME', lang), [datetimeStr]));
 
-  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
-    Format('%.*d', [2, RecData[7]]),
-    Format('%.*d', [2, RecData[8]]),
-    Format('%.*d', [2, RecData[9]]),
-    Format('%.*d', [2, RecData[10]]),
-    Format('%.*d', [2, RecData[11]]),
-    Format('%.*d', [2, RecData[12]]),
-    Format('%.*d', [1, RecData[13]])
-  ]);
-  Log(Format(GetAMessage('LOSS_END_TIME', lang), [datetimeStr]));
+    datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+      Format('%.*d', [2, RecData[7]]),
+      Format('%.*d', [2, RecData[8]]),
+      Format('%.*d', [2, RecData[9]]),
+      Format('%.*d', [2, RecData[10]]),
+      Format('%.*d', [2, RecData[11]]),
+      Format('%.*d', [2, RecData[12]]),
+      Format('%.*d', [1, RecData[13]])
+    ]);
+    Log(Format(GetAMessage('LOSS_END_TIME', lang), [datetimeStr]));
 
-  lossRecordCount :=
-    RecData[14] shl 3 +
-    RecData[15] shl 2 +
-    RecData[16] shl 1 +
-    RecData[17];
-  Log(Format(GetAMessage('TOTAL_RECORDS_ARE_LOST', lang), [lossRecordCount]));
+    lossRecordCount :=
+      RecData[14] shl 3 +
+      RecData[15] shl 2 +
+      RecData[16] shl 1 +
+      RecData[17];
+    Log(Format(GetAMessage('TOTAL_RECORDS_ARE_LOST', lang), [lossRecordCount]));
+  end;
 
   Result := True;
 end;
@@ -345,17 +361,20 @@ function TParser.ParseRebootRecord(const RecData: array of Byte): Boolean;
 var
   datetimeStr: string;
 begin
-  Log(Format(GetAMessage('REBOOT_RECORD_IS_FOUND', lang), [$d3]));
-  datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
-    Format('%.*d', [2, RecData[0]]),
-    Format('%.*d', [2, RecData[1]]),
-    Format('%.*d', [2, RecData[2]]),
-    Format('%.*d', [2, RecData[3]]),
-    Format('%.*d', [2, RecData[4]]),
-    Format('%.*d', [2, RecData[5]]),
-    Format('%.*d', [1, RecData[6]])
-  ]);
-  Log(Format(GetAMessage('REBOOT_TIME', lang), [datetimeStr]));
+  if LogLevel > 0 then
+  begin
+    Log(Format(GetAMessage('REBOOT_RECORD_IS_FOUND', lang), [$d3]));
+    datetimeStr := Format('20%s-%s-%s %s:%s:%s.%s00', [
+      Format('%.*d', [2, RecData[0]]),
+      Format('%.*d', [2, RecData[1]]),
+      Format('%.*d', [2, RecData[2]]),
+      Format('%.*d', [2, RecData[3]]),
+      Format('%.*d', [2, RecData[4]]),
+      Format('%.*d', [2, RecData[5]]),
+      Format('%.*d', [1, RecData[6]])
+    ]);
+    Log(Format(GetAMessage('REBOOT_TIME', lang), [datetimeStr]));
+  end;
 
   Result := True;
 end;
@@ -398,7 +417,7 @@ begin
       Result := ParseRebootRecord(RecData);
     end;
 
-    // The call record
+    // Call record
     $c8:
     begin
       FS.Read(Len, 2);
@@ -417,19 +436,12 @@ end;
 
 function TParser.ParseCallRecord(const RecData: array of Byte): Boolean;
 begin
-  Log(Format('Запись о вызове %d', [RecCount]));
+  if LogLevel > 2 then
+  begin
+    Log(Format(GetAMessage('CALL_DATA_RECORD_IS_FOUND', lang), [$c8]));
+    Log(Format(GetAMessage('CDR_LENGTH', lang), [Length(RecData)]));
+  end;
   Result := True;
-end;
-
-function TParser.GetLogLevel: Byte;
-begin
-  Result := FLogLevel;
-end;
-
-procedure TParser.SetLogLevel(const ALevel: Byte);
-begin
-  if ALevel <> FLogLevel then
-    FLogLevel := ALevel;
 end;
 
 end.

@@ -434,6 +434,6 @@ begin
 end;
 
 initialization
-  Lang := GetLang;
+  lang := GetLang;
 
 end.
