@@ -1,6 +1,6 @@
 object frmSettings: TfrmSettings
-  Left = 362
-  Top = 224
+  Left = 998
+  Top = 225
   Width = 600
   Height = 600
   Caption = 'frmSettings'

@@ -11,14 +11,16 @@ const
   LOG_LEVEL_KEY_NAME: string = 'Log level';
   ENABLE_EXPORT_KEY_NAME: string = 'Enable export';
   EXPORT_PATH_KEY_NAME: string = 'Path';
-  ACCOUNT_NUMBER: string = 'Account number';
-  DEST_NUMBER: string = 'Destination number';
-  START_TIME: string = 'Call starts';
-  DURATION: string = 'Call duration';
-  END_TIME: string = 'Call ends';
-  RECORD_INDEX: string = 'Record index';
-  RECORD_ID: string = 'Record ID';
-  RECORD_FLAGS: string = 'Record flags';
+  ACCOUNT_NUMBER: string = 'AC, DN';
+  DEST_NUMBER: string = 'CN';
+  START_TIME: string = 'SD';
+  DURATION: string = 'DU';
+  END_TIME: string = 'ED';
+  RECORD_INDEX: string = 'SI';
+  RECORD_ID: string = 'CI';
+  RECORD_FLAGS: string = 'FL';
+  RECORD_SEQUENCE: string = 'SQ';
+  CHARGE_STATUS: string = 'CS';
 
   AvgRecLength: Byte = 134;
 
@@ -39,6 +41,8 @@ type
       FIsSIExports: Boolean;  // SI - serial CDR index
       FIsCIExports: Boolean;  // CI - call ID
       FIsFLExports: Boolean;  // FL - flags
+      FIsSQExports: Boolean;  // SQ - record sequence
+      FIsCSExports: Boolean;  // CS - charge status
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -80,6 +84,8 @@ type
       property IsSIExports: Boolean read FIsSIExports write FIsSIExports;
       property IsCIExports: Boolean read FIsCIExports write FIsCIExports;
       property IsFLExports: Boolean read FIsFLExports write FIsFLExports;
+      property IsSQExports: Boolean read FIsSQExports write FIsSQExports;
+      property IsCSExports: Boolean read FIsCSExports write FIsCSExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -125,6 +131,8 @@ begin
     FIsSIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_INDEX, False);
     FIsCIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_ID, False);
     FIsFLExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_FLAGS, False);
+    FIsSQExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, False);
+    FIsCSExports := Ini.ReadBool(FIELDS_SECTION_NAME, CHARGE_STATUS, False);
   end
   else
   begin
@@ -139,6 +147,8 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, FIsSQExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CHARGE_STATUS, FIsCSExports);
   end;
   Ini.Free;
 end;
@@ -230,16 +240,25 @@ begin
     AssignFile(ExportFile, SetExportFileName);
     Rewrite(ExportFile);
     OneLine := '';
-    { TODO : Check out export fields }
-    OneLine := OneLine + 'SI' + ';';
-    OneLine := OneLine + 'CI' + ';';
-    OneLine := OneLine + 'FL' + ';';
-    OneLine := OneLine + 'AC' + ';';
-    OneLine := OneLine + 'DN' + ';';
-    OneLine := OneLine + 'CN' + ';';
-    OneLine := OneLine + 'SD' + ';';
-    OneLine := OneLine + 'ED' + ';';
-    OneLine := OneLine + 'DU' + ';';
+    if IsSIExports then
+      OneLine := OneLine + 'SI' + ';';
+    if IsCIExports then
+      OneLine := OneLine + 'CI' + ';';
+    if IsFLExports then
+      OneLine := OneLine + 'FL' + ';';
+    if IsDNExports then
+    begin
+      OneLine := OneLine + 'AC' + ';';
+      OneLine := OneLine + 'DN' + ';';
+    end;
+    if IsCNExports then
+      OneLine := OneLine + 'CN' + ';';
+    if IsSDExports then
+      OneLine := OneLine + 'SD' + ';';
+    if IsEDExports then
+      OneLine := OneLine + 'ED' + ';';
+    if IsDUExports then
+      OneLine := OneLine + 'DU' + ';';
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
     Writeln(ExportFile, OneLine);
@@ -571,7 +590,9 @@ begin
     Log(Format('        F16-F09 : %s', [DecToBin(RecData[9])]));
     Log(Format('        F21-F17 : %s', [DecToBin(RecData[10])]));
   end;
-  { TODO : Add Flags to Export fields list }
+  if IsExportEnable then
+    if IsFLExports then
+      OneLine := OneLine + '"' + FL + '"' + ';';
 
   // SQ - Record sequence & CS - Charge status
   SQ := (RecData[11] shr 4) and $0F;
@@ -581,8 +602,13 @@ begin
     Log(Format(GetAMessage('SQ', lang), [SQ]));
     Log(Format(GetAMessage('CS', lang), [CS]));
   end;
-  { TODO : Add SQ & CS to Export fields list }
-
+  if IsExportEnable then
+  begin
+    if IsSQExports then
+      OneLine := OneLine + IntToStr(SQ) + ';';
+    if IsCSExports then
+      OneLine := OneLine + IntToStr(CS) + ';';
+  end;
   // ACL - Area code length & DNL - Directory number length (Owner number length)
   ACL := (RecData[12] shr 5) and $07;
   DNL := RecData[12] and $1F;

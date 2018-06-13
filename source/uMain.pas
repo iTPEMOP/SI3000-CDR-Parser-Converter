@@ -327,6 +327,14 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkFL_Caption', 'FL - flags');
     if not IniFile.ValueExists('ru', 'frmSettings_chkFL_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkFL_Caption', 'FL - флаги записи');
+    if not IniFile.ValueExists('en', 'frmSettings_chkSQ_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkSQ_Caption', 'SQ - record sequence');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkSQ_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkSQ_Caption', 'SQ - последовательность записи');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCS_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCS_Caption', 'CS - charge status');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCS_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCS_Caption', 'CS - статус расчета');
 
 
     if not IniFile.ValueExists('en', 'frmSettings_btnSave_Hint') then
