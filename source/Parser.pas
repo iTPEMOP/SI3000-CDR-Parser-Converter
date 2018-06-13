@@ -11,8 +11,9 @@ const
   LOG_LEVEL_KEY_NAME: string = 'Log level';
   ENABLE_EXPORT_KEY_NAME: string = 'Enable export';
   EXPORT_PATH_KEY_NAME: string = 'Path';
-  ACCOUNT_NUMBER: string = 'AC, DN';
-  DEST_NUMBER: string = 'CN';
+  ACCOUNT_AREA: string = 'AC';
+  ACCOUNT_NUMBER: string = 'DN';
+  CALLED_NUMBER: string = 'CN';
   START_TIME: string = 'SD';
   DURATION: string = 'DU';
   END_TIME: string = 'ED';
@@ -33,7 +34,8 @@ type
       // Parser settings
       FIsExportEnable: Boolean;
       FExportPath: string;
-      FIsDNExports: Boolean;  // DN - owner's area code & directory number
+      FIsACExports: Boolean;  // AC - owner's area code
+      FIsDNExports: Boolean;  // DN - directory number (owner's number)
       FIsCNExports: Boolean;  // CN - called number
       FIsSDExports: Boolean;  // SD - call starts date & time
       FIsDUExports: Boolean;  // DU - call/service duration, sec.
@@ -76,6 +78,7 @@ type
       property LogLevel: Byte read GetLogLevel write SetLogLevel;
       property IsExportEnable: Boolean read FIsExportEnable write FIsExportEnable;
       property ExportPath: String read GetExportPath write SetExportPath;
+      property IsACExports: Boolean read FIsACExports write FIsACExports;
       property IsDNExports: Boolean read FIsDNExports write FIsDNExports;
       property IsCNExports: Boolean read FIsCNExports write FIsCNExports;
       property IsSDExports: Boolean read FIsSDExports write FIsSDExports;
@@ -123,8 +126,9 @@ begin
     FLogLevel := Ini.ReadInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, 2);
     FIsExportEnable := Ini.ReadBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, True);
     FExportPath := Ini.ReadString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, '');
+    FIsACExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_AREA, False);
     FIsDNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, True);
-    FIsCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, DEST_NUMBER, True);
+    FIsCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, CALLED_NUMBER, True);
     FIsSDExports := Ini.ReadBool(FIELDS_SECTION_NAME, START_TIME, True);
     FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, DURATION, True);
     FIsEDExports := Ini.ReadBool(FIELDS_SECTION_NAME, END_TIME, False);
@@ -139,8 +143,9 @@ begin
     Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
     Ini.WriteBool(EXPORT_SECTION_NAME,ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
     Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_AREA, FIsACExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsCNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CALLED_NUMBER, FIsCNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
@@ -162,14 +167,17 @@ begin
     Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
     Ini.WriteBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
     Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_AREA, FIsACExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsCNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CALLED_NUMBER, FIsCNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, FIsSQExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CHARGE_STATUS, FIsCSExports);
   finally
     Ini.Free;
   end;
@@ -246,19 +254,24 @@ begin
       OneLine := OneLine + 'CI' + ';';
     if IsFLExports then
       OneLine := OneLine + 'FL' + ';';
+    if IsSQExports then
+      OneLine := OneLine + 'SQ' + ';';
+    if IsCSExports then
+      OneLine := OneLine + 'CS' + ';';
     if IsDNExports then
     begin
-      OneLine := OneLine + 'AC' + ';';
+      if IsACExports then
+        OneLine := OneLine + 'AC' + ';';
       OneLine := OneLine + 'DN' + ';';
     end;
     if IsCNExports then
-      OneLine := OneLine + 'CN' + ';';
+      OneLine := OneLine + 'I100_CN' + ';';
     if IsSDExports then
-      OneLine := OneLine + 'SD' + ';';
+      OneLine := OneLine + 'I102_SD' + ';';
     if IsEDExports then
-      OneLine := OneLine + 'ED' + ';';
+      OneLine := OneLine + 'I103_ED' + ';';
     if IsDUExports then
-      OneLine := OneLine + 'DU' + ';';
+      OneLine := OneLine + 'I104_DU' + ';';
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
     Writeln(ExportFile, OneLine);
@@ -557,6 +570,7 @@ begin
   end;
 
   { Working with fixed part of the record }
+
   // SI – serial CDR index
   for i := 0 to 3 do
     Byte4(SI)[i] := RecData[3 - i];
@@ -609,6 +623,7 @@ begin
     if IsCSExports then
       OneLine := OneLine + IntToStr(CS) + ';';
   end;
+
   // ACL - Area code length & DNL - Directory number length (Owner number length)
   ACL := (RecData[12] shr 5) and $07;
   DNL := RecData[12] and $1F;
@@ -633,7 +648,10 @@ begin
   end;
   if IsExportEnable then
     if IsDNExports then
-      OneLine := OneLine + Copy(DN, 1, ACL) + ';' + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
+      if IsACExports then
+        OneLine := OneLine + Copy(DN, 1, ACL) + ';';
+      OneLine := OneLine + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
+
 
 
 

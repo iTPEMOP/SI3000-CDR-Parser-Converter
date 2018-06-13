@@ -1,6 +1,6 @@
 object frmSettings: TfrmSettings
-  Left = 998
-  Top = 225
+  Left = 675
+  Top = 194
   Width = 600
   Height = 600
   Caption = 'frmSettings'
@@ -109,12 +109,13 @@ object frmSettings: TfrmSettings
         Top = 20
         Width = 240
         Height = 17
-        Caption = 'AC, DN - area code,  directory number'
+        Caption = 'DN -  directory number (owner number)'
         TabOrder = 0
+        OnClick = chkDNClick
       end
       object chkCN: TCheckBox
         Left = 16
-        Top = 34
+        Top = 48
         Width = 240
         Height = 17
         Caption = 'CN - called number'
@@ -122,7 +123,7 @@ object frmSettings: TfrmSettings
       end
       object chkSD: TCheckBox
         Left = 16
-        Top = 48
+        Top = 62
         Width = 240
         Height = 17
         Caption = 'SD - start date and time'
@@ -130,7 +131,7 @@ object frmSettings: TfrmSettings
       end
       object chkDU: TCheckBox
         Left = 16
-        Top = 62
+        Top = 76
         Width = 240
         Height = 17
         Caption = 'DU - call/service duration, sec.'
@@ -138,7 +139,7 @@ object frmSettings: TfrmSettings
       end
       object chkED: TCheckBox
         Left = 16
-        Top = 84
+        Top = 98
         Width = 240
         Height = 17
         Caption = 'ED - end date and time'
@@ -170,7 +171,7 @@ object frmSettings: TfrmSettings
       end
       object chkCS: TCheckBox
         Left = 16
-        Top = 112
+        Top = 126
         Width = 240
         Height = 17
         Caption = 'CS - Charge status'
@@ -178,11 +179,22 @@ object frmSettings: TfrmSettings
       end
       object chkSQ: TCheckBox
         Left = 16
-        Top = 98
+        Top = 112
         Width = 240
         Height = 17
         Caption = 'SQ - record sequence'
         TabOrder = 5
+      end
+      object chkAC: TCheckBox
+        Left = 28
+        Top = 34
+        Width = 240
+        Height = 17
+        Hint = 
+          'Include owner area code as a separate field (usually AC is empty' +
+          ')'
+        Caption = 'AC - area code'
+        TabOrder = 10
       end
     end
   end

@@ -295,10 +295,14 @@ begin
     if not IniFile.ValueExists('ru', 'frmSettings_chkExportCSV_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkExportCSV_Caption', 'Разрешить экспорт в csv-файл');
 
+    if not IniFile.ValueExists('en', 'frmSettings_chkAC_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkAC_Caption', 'AC - area code (owner number)');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkAC_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkAC_Caption', 'AC - код зоны абонента');
     if not IniFile.ValueExists('en', 'frmSettings_chkDN_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkDN_Caption', 'AC, DN - area code,  directory number');
+      IniFile.WriteString('en', 'frmSettings_chkDN_Caption', 'DN -  directory number (owner number)');
     if not IniFile.ValueExists('ru', 'frmSettings_chkDN_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkDN_Caption', 'AC, DN - код зоны,  номер абонента');
+      IniFile.WriteString('ru', 'frmSettings_chkDN_Caption', 'DN - номер абонента');
     if not IniFile.ValueExists('en', 'frmSettings_chkCN_Caption') then
       IniFile.WriteString('en', 'frmSettings_chkCN_Caption', 'CN - called number');
     if not IniFile.ValueExists('ru', 'frmSettings_chkCN_Caption') then
@@ -336,7 +340,10 @@ begin
     if not IniFile.ValueExists('ru', 'frmSettings_chkCS_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkCS_Caption', 'CS - статус расчета');
 
-
+    if not IniFile.ValueExists('en', 'frmSettings_chkAC_Hint') then
+      IniFile.WriteString('en', 'frmSettings_chkAC_Hint', '|Include owner''s area code as a separate field (usually AC is empty)');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkAC_Hint') then
+      IniFile.WriteString('ru', 'frmSettings_chkAC_Hint', '|Код зоны абонента (как правило, он пуст)');
     if not IniFile.ValueExists('en', 'frmSettings_btnSave_Hint') then
       IniFile.WriteString('en', 'frmSettings_btnSave_Hint', '|Save settings and close window');
     if not IniFile.ValueExists('ru', 'frmSettings_btnSave_Hint') then

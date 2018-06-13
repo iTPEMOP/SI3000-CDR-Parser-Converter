@@ -30,11 +30,13 @@ type
     lblPathHint: TLabel;
     chkCS: TCheckBox;
     chkSQ: TCheckBox;
+    chkAC: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure pnlSelectDirClick(Sender: TObject);
+    procedure chkDNClick(Sender: TObject);
   private
     procedure InitInterface;
     procedure LoadSettings;
@@ -207,11 +209,17 @@ begin
         );
 
       if Components[i].ClassType = TCheckBox then
+      begin
         (Components[i] as TCheckBox).Caption := IniFile.ReadString(
           lang,
           Name + '_' + Components[i].Name + '_Caption',
           (Components[i] as TCheckBox).Caption
         );
+        (Components[i] as TCheckBox).Hint := IniFile.ReadString(
+          lang,
+          Name + '_' + Components[i].Name + '_Hint', (Components[i] as TCheckBox).Hint
+        );
+      end;
     end;
   finally
     IniFile.Free;
@@ -228,6 +236,7 @@ begin
     rgLogLevel.ItemIndex := parser.LogLevel;
     chkExportCSV.Checked := parser.IsExportEnable;
     lbledtExportPath.Text := parser.ExportPath;
+    chkAC.Checked := parser.IsACExports;
     chkDN.Checked := parser.IsDNExports;
     chkCN.Checked := parser.IsCNExports;
     chkSD.Checked := parser.IsSDExports;
@@ -236,6 +245,8 @@ begin
     chkSI.Checked := parser.IsSIExports;
     chkCI.Checked := parser.IsCIExports;
     chkFL.Checked := parser.IsFLExports;
+    chkSQ.Checked := parser.IsSQExports;
+    chkCS.Checked := parser.IsCSExports;
   finally
     parser.Free;
   end;
@@ -252,6 +263,7 @@ begin
     parser.LogLevel := rgLogLevel.ItemIndex;
     parser.IsExportEnable := chkExportCSV.Checked;
     parser.ExportPath := lbledtExportPath.Text;
+    parser.IsACExports := chkAC.Checked;
     parser.IsDNExports := chkDN.Checked;
     parser.IsCNExports := chkCN.Checked;
     parser.IsSDExports := chkSD.Checked;
@@ -260,6 +272,8 @@ begin
     parser.IsSIExports := chkSI.Checked;
     parser.IsCIExports := chkCI.Checked;
     parser.IsFLExports := chkFL.Checked;
+    parser.IsSQExports := chkSQ.Checked;
+    parser.IsCSExports := chkCS.Checked;
     parser.SaveParams;
   finally
     parser.Free;
@@ -284,5 +298,12 @@ begin
   lbledtExportPath.Text := dir;
 end;
 
+
+procedure TfrmSettings.chkDNClick(Sender: TObject);
+begin
+  chkAC.Enabled := chkDN.Checked;
+  if not chkDN.Checked then
+    chkAC.Checked := False;
+end;
 
 end.

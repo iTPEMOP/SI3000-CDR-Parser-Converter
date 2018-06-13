@@ -32,7 +32,7 @@ object frmMain: TfrmMain
     Height = 19
     Panels = <
       item
-        Width = 296
+        Width = 334
       end
       item
         Width = 20
