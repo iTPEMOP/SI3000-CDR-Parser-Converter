@@ -23,6 +23,9 @@ const
   AvgRecLength: Byte = 134;
 
 type
+  { LongWord per byte type}
+  Byte4 = array[0..3] of Byte;
+
   TParser = class
     private
       // Parser settings
@@ -51,11 +54,11 @@ type
       procedure SetExportPath(const APath: string);
       function GetLogLevel: Byte;
       procedure SetLogLevel(const ALevel: Byte);
-      function ParseRecord(Progress: Integer; var ExportLine: string): Boolean;
+      function ParseRecord(Progress: Integer; var OneLine: string): Boolean;
       function ParseDateTimeChangesRecord(const RecData: array of Byte): Boolean;
       function ParseLossRecord(const RecData: array of Byte): Boolean;
       function ParseRebootRecord(const RecData: array of Byte): Boolean;
-      function ParseCallRecord(const RecData: array of Byte): Boolean;
+      function ParseCallRecord(const RecData: array of Byte; var OneLine: string): Boolean;
       procedure InitParams;
     public
       constructor Create(AFileName: string; ALogControl: TMemo; AGauge: TGauge);
@@ -220,7 +223,6 @@ function TParser.Parse: Boolean;
 var
   ExportFile: TextFile;
   ApprRecCount: Integer;
-
   OneLine: string; // the line for export file
 begin
   if IsExportEnable then
@@ -228,10 +230,11 @@ begin
     AssignFile(ExportFile, SetExportFileName);
     Rewrite(ExportFile);
     OneLine := '';
-    OneLine := OneLine + 'index' + ';';
-    OneLine := OneLine + 'id' + ';';
-    OneLine := OneLine + 'flags' + ';';
-    OneLine := OneLine + 'user_number' + ';';
+    OneLine := OneLine + 'SI' + ';';
+    OneLine := OneLine + 'CI' + ';';
+    OneLine := OneLine + 'FL' + ';';
+    OneLine := OneLine + 'AC' + ';';
+    OneLine := OneLine + 'DN' + ';';
     OneLine := OneLine + 'dest_number' + ';';
     OneLine := OneLine + 'starts' + ';';
     OneLine := OneLine + 'ends' + ';';
@@ -272,6 +275,9 @@ begin
   finally
     FS.Free;
   end;
+
+  if IsExportEnable then
+    CloseFile(ExportFile);
 
   Result := FIsFSEnd;
 end;
@@ -318,8 +324,9 @@ end;
 
 function TParser.ParseLossRecord(const RecData: array of Byte): Boolean;
 var
+  i: Integer;
   datetimeStr: string;
-  lossRecordCount: LongInt;
+  lossRecordCount: LongWord;
 begin
   if LogLevel > 0 then
   begin
@@ -346,11 +353,8 @@ begin
     ]);
     Log(Format(GetAMessage('LOSS_END_TIME', lang), [datetimeStr]));
 
-    lossRecordCount :=
-      RecData[14] shl 3 +
-      RecData[15] shl 2 +
-      RecData[16] shl 1 +
-      RecData[17];
+    for i := 0 to 3 do
+      Byte4(lossRecordCount)[i] := RecData[17 - i];
     Log(Format(GetAMessage('TOTAL_RECORDS_ARE_LOST', lang), [lossRecordCount]));
   end;
 
@@ -380,7 +384,7 @@ begin
 end;
 
 
-function TParser.ParseRecord(Progress: Integer; var ExportLine: string): Boolean;
+function TParser.ParseRecord(Progress: Integer; var OneLine: string): Boolean;
 var
   TypeID: Byte;
   Len: Word;
@@ -425,7 +429,8 @@ begin
       SetLength(RecData, Len - 3);
       for i := 0 to Length(RecData) - 1 do
         FS.Read(RecData[i], 1);
-      Result := ParseCallRecord(RecData);
+      OneLine := '';
+      Result := ParseCallRecord(RecData, OneLine);
     end;
     else
       Log(Format(GetAMessage('UNKNOWN_RECORD_TYPE', lang), [TypeID]));
@@ -434,13 +439,183 @@ begin
   FIsFSEnd := FS.Position >= FS.Size;
 end;
 
-function TParser.ParseCallRecord(const RecData: array of Byte): Boolean;
+function DecToBin(Int: Integer): string;
+var
+  AMod: Integer;
 begin
+  while Int >= 2 do
+  begin
+    AMod := Int mod 2;
+    Int := Int div 2;
+    Result := IntToStr(AMod) + Result;
+  end;
+  Result := IntToStr(Int) + Result;
+  while Length(Result) < 8 do
+    Result := '0' + Result;
+end;
+
+
+function IsBitSet(const val: Byte; const TheBit: Byte): Boolean;
+begin
+  Result := (val and (1 shl TheBit)) <> 0;
+end;
+
+function Byte1PerBit(const Flag: Byte): string;
+begin
+  Result := '';
+  if IsBitSet(Flag, 0) then
+    Result := Result + 'CR,';
+  if IsBitSet(Flag, 1) then
+    Result :=  Result + 'FU,';
+  if IsBitSet(Flag, 2) then
+    Result :=  Result + 'FI,';
+  if IsBitSet(Flag, 3) then
+    Result :=  Result + 'CS,';
+  if IsBitSet(Flag, 4) then
+    Result :=  Result + 'CM,';
+  if IsBitSet(Flag, 5) then
+    Result :=  Result + 'AM,';
+  if IsBitSet(Flag, 6) then
+    Result :=  Result + 'IA,';
+  if IsBitSet(Flag, 7) then
+    Result :=  Result + 'DB,';
+end;
+
+function Byte2PerBit(const Flag: Byte): string;
+begin
+  Result := '';
+  if IsBitSet(Flag, 0) then
+    Result := Result + 'ID,';
+  if IsBitSet(Flag, 1) then
+    Result :=  Result + 'OO,';
+  if IsBitSet(Flag, 2) then
+    Result :=  Result + 'TO,';
+  if IsBitSet(Flag, 3) then
+    Result :=  Result + 'PO,';
+  if IsBitSet(Flag, 4) then
+    Result :=  Result + 'IP,';
+  if IsBitSet(Flag, 5) then
+    Result :=  Result + 'RC,';
+  if IsBitSet(Flag, 6) then
+    Result :=  Result + 'RS,';
+  if IsBitSet(Flag, 7) then
+    Result :=  Result + 'TC,';
+end;
+
+function Byte3PerBit(const Flag: Byte): string;
+begin
+  Result := '';
+  if IsBitSet(Flag, 0) then
+    Result := Result + 'CX,';
+  if IsBitSet(Flag, 1) then
+    Result :=  Result + 'PP,';
+  if IsBitSet(Flag, 2) then
+    Result :=  Result + 'SC,';
+  if IsBitSet(Flag, 3) then
+    Result :=  Result + 'OA,';
+  if IsBitSet(Flag, 4) then
+    Result :=  Result + 'FP,';
+end;
+
+function TParser.ParseCallRecord(const RecData: array of Byte; var OneLine: string): Boolean;
+var
+  i: Integer;
+  SI, CI: LongWord;
+  FL: string;
+  SQ, CS: Byte;
+  ACL, DNL: Byte;
+  AC_DN_len: Integer; // Owner's area code + derectiry number length
+  DN: string;
+begin
+  if LogLevel > 0 then
+    Log('|');
   if LogLevel > 2 then
   begin
     Log(Format(GetAMessage('CALL_DATA_RECORD_IS_FOUND', lang), [$c8]));
     Log(Format(GetAMessage('CDR_LENGTH', lang), [Length(RecData)]));
+    Log(GetAMessage('FIXED_DATA', lang));
   end;
+
+  { Working with fixed part of the record }
+  // SI – serial CDR index
+  for i := 0 to 3 do
+    Byte4(SI)[i] := RecData[3 - i];
+  if LogLevel > 1 then
+    Log(Format(GetAMessage('SI', lang), [SI]));
+  if IsExportEnable then
+    if IsIndexExports then
+      OneLine := OneLine + IntToStr(SI) + ';';
+
+  // CI - Call identifier
+  for i := 0 to 3 do
+    Byte4(CI)[i] := RecData[7 - i];
+  if LogLevel > 1 then
+    Log(Format(GetAMessage('CI', lang), [CI]));
+  if IsExportEnable then
+    if IsIDExports then
+      OneLine := OneLine + IntToStr(CI) + ';';
+
+  // FL - Flags
+  FL := '';
+  FL := FL + Byte1PerBit(RecData[8]);
+  FL := FL + Byte2PerBit(RecData[9]);
+  FL := FL + Byte3PerBit(RecData[10]);
+  if Length(FL) > 0 then
+    Delete(FL, Length(FL), 1);
+  if LogLevel > 1 then
+    Log(Format(GetAMessage('FL', lang), [FL]));
+    if LogLevel > 2 then
+  begin
+    Log(Format('        F08-F01 : %s', [DecToBin(RecData[8])]));
+    Log(Format('        F16-F09 : %s', [DecToBin(RecData[9])]));
+    Log(Format('        F21-F17 : %s', [DecToBin(RecData[10])]));
+  end;
+
+  // SQ - Record sequence & CS - Charge status
+  SQ := (RecData[11] shr 4) and $0F;
+  CS := RecData[11] and $0F;
+  if LogLevel > 1 then
+  begin
+    Log(Format(GetAMessage('SQ', lang), [SQ]));
+    Log(Format(GetAMessage('CS', lang), [CS]));
+  end;
+  { TODO : Add SQ & CS to Export fields list }
+
+  // ACL - Area code length & DNL - Directory number length (Owner number length)
+  ACL := (RecData[12] shr 5) and $07;
+  DNL := RecData[12] and $1F;
+  if LogLevel > 1 then
+  begin
+    Log(Format(GetAMessage('ACL', lang), [ACL]));
+    Log(Format(GetAMessage('DNL', lang), [DNL]));
+  end;
+
+  // AC - Area code & DN - Directory number (Owner number)
+  AC_DN_len := (ACL + DNL) div 2;
+  if ((ACL + DNL) mod 2) > 0 then
+    Inc(AC_DN_len);
+  DN := '';
+  for i := 0 to AC_DN_len - 1 do
+    DN := DN + IntToHex(RecData[13 + i], 2);
+  if ((ACL + DNL) mod 2) > 0 then
+    DN := Copy(DN, 1, Length(DN) - 1);
+  if LogLevel > 0 then
+  begin
+    Log(Format(GetAMessage('DN', lang), [Copy(DN, 1, ACL), Copy(DN, ACL + 1, Length(DN) - ACL)]));
+  end;
+  if IsExportEnable then
+    if IsAccountNumberExports then
+      OneLine := OneLine + Copy(DN, 1, ACL) + ';' + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
+
+
+
+  if LogLevel > 0 then
+    Log('-----------------------------------------------------------------');
+
+  // delete last separator
+  if (Length(OneLine) > 1) then
+    Delete(OneLine, Length(OneLine), 1);
+
   Result := True;
 end;
 

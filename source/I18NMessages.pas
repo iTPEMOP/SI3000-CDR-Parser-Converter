@@ -4,7 +4,7 @@ unit I18NMessages;
 interface
 
 const
-  CONST_NAMES: array[0..47] of string = (
+  CONST_NAMES: array[0..65] of string = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -40,6 +40,24 @@ const
     'CALL_DATA_RECORD_IS_FOUND_ru',
     'CDR_LENGTH_en',
     'CDR_LENGTH_ru',
+    'FIXED_DATA_en',
+    'FIXED_DATA_ru',
+    'SI_en',
+    'SI_ru',
+    'CI_en',
+    'CI_ru',
+    'FL_en',
+    'FL_ru',
+    'SQ_en',
+    'SQ_ru',
+    'CS_en',
+    'CS_ru',
+    'ACL_en',
+    'ACL_ru',
+    'DNL_en',
+    'DNL_ru',
+    'DN_en',
+    'DN_ru',
 
   { Warnings }
     'WARNING_en',
@@ -57,7 +75,7 @@ const
     'LOG_HAS_BEEN_SAVED_en',
     'LOG_HAS_BEEN_SAVED_ru'
   );
-  CONST_VALUES: array[0..47] of string = (
+  CONST_VALUES: array[0..65] of string = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -90,8 +108,26 @@ const
     '    Время перезагрузки: %s',
     'Call data racord is found (%d).',
     'Найдена запись о вызове (%d).',
-    '  CDR length: %d bytes.',
-    '  Длина этой записи: %d байт.',
+    '  CDR length (bytes): %u',
+    '  Длина этой записи (байт): %u',
+    '                  ~~~~ Fixed part ~~~~',
+    '                  ~~~~ Фиксированная часть записи ~~~~',
+    '    SI - serial CRD index: %u',
+    '    SI - индекс записи: %u',
+    '    CI - call identifier: %u',
+    '    CI - идентификатор вызова: %u',
+    '    FL - flags: "%s"',
+    '    FL - флаги вызова: "%s"',
+    '    SQ - record sequence: %u',
+    '    SQ - последовательность записи: %u',
+    '    CS - charge status: %u',
+    '    CS - статус расчета: %u',
+    '    ACL - area zone length (digits): %u',
+    '    ACL - длина кода зоны (цифр): %u',
+    '    DNL - directory (owner) number length (digits): %u',
+    '    DNL - длина абонентского номера (цифр): %u',
+    '  Owner''s full number. AC - area code: "%s", DN - directory number: "%s"',
+    '  Полный номер владельца. AC - код зоны: "%s", DN - номер телефона: "%s"',
 
     'Warning',
     'Предупреждение',
