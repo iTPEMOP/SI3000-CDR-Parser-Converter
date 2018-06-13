@@ -104,69 +104,85 @@ object frmSettings: TfrmSettings
       Caption = 'Export fields'
       TabOrder = 3
       Visible = False
-      object chkNumber: TCheckBox
+      object chkDN: TCheckBox
         Left = 16
-        Top = 24
+        Top = 20
         Width = 240
         Height = 17
-        Caption = 'Account number'
+        Caption = 'AC, DN - area code,  directory number'
         TabOrder = 0
       end
-      object chkDestNumber: TCheckBox
+      object chkCN: TCheckBox
         Left = 16
-        Top = 40
+        Top = 34
         Width = 240
         Height = 17
-        Caption = 'Destitation number'
+        Caption = 'CN - called number'
         TabOrder = 1
       end
-      object chkCallStarts: TCheckBox
+      object chkSD: TCheckBox
         Left = 16
-        Top = 56
+        Top = 48
         Width = 240
         Height = 17
-        Caption = 'Call starts'
+        Caption = 'SD - start date and time'
         TabOrder = 2
       end
-      object chkCallDuration: TCheckBox
+      object chkDU: TCheckBox
         Left = 16
-        Top = 72
+        Top = 62
         Width = 240
         Height = 17
-        Caption = 'Call duration, sec.'
+        Caption = 'DU - call/service duration, sec.'
         TabOrder = 3
       end
-      object chkCallEnds: TCheckBox
+      object chkED: TCheckBox
         Left = 16
-        Top = 106
+        Top = 84
         Width = 240
         Height = 17
-        Caption = 'Call ends'
+        Caption = 'ED - end date and time'
         TabOrder = 4
       end
-      object chkRecordIndex: TCheckBox
+      object chkSI: TCheckBox
         Left = 276
-        Top = 24
+        Top = 20
         Width = 240
         Height = 17
-        Caption = 'Record index'
-        TabOrder = 5
+        Caption = 'SI - CDR index'
+        TabOrder = 7
       end
-      object chkRecordID: TCheckBox
+      object chkCI: TCheckBox
         Left = 276
-        Top = 40
+        Top = 34
         Width = 240
         Height = 17
-        Caption = 'Record ID'
+        Caption = 'CI - call identifier (Call ID)'
+        TabOrder = 8
+      end
+      object chkFL: TCheckBox
+        Left = 276
+        Top = 48
+        Width = 240
+        Height = 17
+        Caption = 'FL - flags'
+        TabOrder = 9
+      end
+      object chkCS: TCheckBox
+        Left = 16
+        Top = 112
+        Width = 240
+        Height = 17
+        Caption = 'CS - Charge status'
         TabOrder = 6
       end
-      object chkRecordFlags: TCheckBox
-        Left = 276
-        Top = 56
+      object chkSQ: TCheckBox
+        Left = 16
+        Top = 98
         Width = 240
         Height = 17
-        Caption = 'Record flags'
-        TabOrder = 7
+        Caption = 'SQ - record sequence'
+        TabOrder = 5
       end
     end
   end

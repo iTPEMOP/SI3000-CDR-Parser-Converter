@@ -294,38 +294,39 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkExportCSV_Caption', 'Enable export to csv-formatted file');
     if not IniFile.ValueExists('ru', 'frmSettings_chkExportCSV_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkExportCSV_Caption', 'Разрешить экспорт в csv-файл');
-    if not IniFile.ValueExists('en', 'frmSettings_chkNumber_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkNumber_Caption', 'Account number');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkNumber_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkNumber_Caption', 'Номер абонента');
-    if not IniFile.ValueExists('en', 'frmSettings_chkDestNumber_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkDestNumber_Caption', 'Destination number');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkDestNumber_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkDestNumber_Caption', 'Вызываемый номер');
-    if not IniFile.ValueExists('en', 'frmSettings_chkCallStarts_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkCallStarts_Caption', 'Call starts time');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkCallStarts_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkCallStarts_Caption', 'Время начала вызова');
-    if not IniFile.ValueExists('en', 'frmSettings_chkCallEnds_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkCallEnds_Caption', 'Call ends time');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkCallEnds_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkCallEnds_Caption', 'Время окончания вызова');
-    if not IniFile.ValueExists('en', 'frmSettings_chkCallDuration_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkCallDuration_Caption', 'Call duration, sec.');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkCallDuration_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkCallDuration_Caption', 'Продолжительность вызова, сек.');
-    if not IniFile.ValueExists('en', 'frmSettings_chkRecordIndex_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkRecordIndex_Caption', 'Record index');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordIndex_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkRecordIndex_Caption', 'Индекс записи');
-    if not IniFile.ValueExists('en', 'frmSettings_chkRecordID_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkRecordID_Caption', 'Record ID');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordID_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkRecordID_Caption', 'ID записи');
-    if not IniFile.ValueExists('en', 'frmSettings_chkRecordFlags_Caption') then
-      IniFile.WriteString('en', 'frmSettings_chkRecordFlags_Caption', 'Record flags');
-    if not IniFile.ValueExists('ru', 'frmSettings_chkRecordFlags_Caption') then
-      IniFile.WriteString('ru', 'frmSettings_chkRecordFlags_Caption', 'Флаги записи');
+
+    if not IniFile.ValueExists('en', 'frmSettings_chkDN_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkDN_Caption', 'AC, DN - area code,  directory number');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkDN_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkDN_Caption', 'AC, DN - код зоны,  номер абонента');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCN_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCN_Caption', 'CN - called number');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCN_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCN_Caption', 'CN - вызываемый номер');
+    if not IniFile.ValueExists('en', 'frmSettings_chkSD_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkSD_Caption', 'SD - start date and time');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkSD_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkSD_Caption', 'SD - дата/время начала вызова');
+    if not IniFile.ValueExists('en', 'frmSettings_chkED_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkED_Caption', 'ED - end date and time');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkED_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkED_Caption', 'ED - дата/время окончания вызова');
+    if not IniFile.ValueExists('en', 'frmSettings_chkDU_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkDU_Caption', 'DU - call/service duration, sec.');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkDU_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkDU_Caption', 'DU - продолжительность вызова/услуги, сек.');
+    if not IniFile.ValueExists('en', 'frmSettings_chkSI_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkSI_Caption', 'SI - CDR index');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkSI_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkSI_Caption', 'SI - индекс CDR записи');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCI_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCI_Caption', 'CI - call identifier (Call ID)');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCI_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCI_Caption', 'CI - идентификатор вызова (Call ID)');
+    if not IniFile.ValueExists('en', 'frmSettings_chkFL_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkFL_Caption', 'FL - flags');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkFL_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkFL_Caption', 'FL - флаги записи');
 
 
     if not IniFile.ValueExists('en', 'frmSettings_btnSave_Hint') then

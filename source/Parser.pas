@@ -31,14 +31,14 @@ type
       // Parser settings
       FIsExportEnable: Boolean;
       FExportPath: string;
-      FIsAccountNumberExports: Boolean;
-      FIsDestNumberExports: Boolean;
-      FIsStartDateTimeExports: Boolean;
-      FIsDurationExports: Boolean;
-      FIsEndDateTimeExports: Boolean;
-      FIsIndexExports: Boolean;
-      FIsIDExports: Boolean;
-      FIsFlagsExports: Boolean;
+      FIsDNExports: Boolean;  // DN - owner's area code & directory number
+      FIsCNExports: Boolean;  // CN - called number
+      FIsSDExports: Boolean;  // SD - call starts date & time
+      FIsDUExports: Boolean;  // DU - call/service duration, sec.
+      FIsEDExports: Boolean;  // SD - call ends date & time
+      FIsSIExports: Boolean;  // SI - serial CDR index
+      FIsCIExports: Boolean;  // CI - call ID
+      FIsFLExports: Boolean;  // FL - flags
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -72,14 +72,14 @@ type
       property LogLevel: Byte read GetLogLevel write SetLogLevel;
       property IsExportEnable: Boolean read FIsExportEnable write FIsExportEnable;
       property ExportPath: String read GetExportPath write SetExportPath;
-      property IsAccountNumberExports: Boolean read FIsAccountNumberExports write FIsAccountNumberExports;
-      property IsDestNumberExports: Boolean read FIsDestNumberExports write FIsDestNumberExports;
-      property IsStartTimeExports: Boolean read FIsStartDateTimeExports write FIsStartDateTimeExports;
-      property IsDurationExports: Boolean read FIsDurationExports write FIsDurationExports;
-      property IsEndTimeExports: Boolean read FIsEndDateTimeExports write FIsEndDateTimeExports;
-      property IsIndexExports: Boolean read FIsIndexExports write FIsIndexExports;
-      property IsIDExports: Boolean read FIsIDExports write FIsIDExports;
-      property IsFlagsExports: Boolean read FIsFlagsExports write FIsFlagsExports;
+      property IsDNExports: Boolean read FIsDNExports write FIsDNExports;
+      property IsCNExports: Boolean read FIsCNExports write FIsCNExports;
+      property IsSDExports: Boolean read FIsSDExports write FIsSDExports;
+      property IsDUExports: Boolean read FIsDUExports write FIsDUExports;
+      property IsEDExports: Boolean read FIsEDExports write FIsEDExports;
+      property IsSIExports: Boolean read FIsSIExports write FIsSIExports;
+      property IsCIExports: Boolean read FIsCIExports write FIsCIExports;
+      property IsFLExports: Boolean read FIsFLExports write FIsFLExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -117,28 +117,28 @@ begin
     FLogLevel := Ini.ReadInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, 2);
     FIsExportEnable := Ini.ReadBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, True);
     FExportPath := Ini.ReadString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, '');
-    FIsAccountNumberExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, True);
-    FIsDestNumberExports := Ini.ReadBool(FIELDS_SECTION_NAME, DEST_NUMBER, True);
-    FIsStartDateTimeExports := Ini.ReadBool(FIELDS_SECTION_NAME, START_TIME, True);
-    FIsDurationExports := Ini.ReadBool(FIELDS_SECTION_NAME, DURATION, True);
-    FIsEndDateTimeExports := Ini.ReadBool(FIELDS_SECTION_NAME, END_TIME, False);
-    FIsIndexExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_INDEX, False);
-    FIsIDExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_ID, False);
-    FIsFlagsExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_FLAGS, False);
+    FIsDNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, True);
+    FIsCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, DEST_NUMBER, True);
+    FIsSDExports := Ini.ReadBool(FIELDS_SECTION_NAME, START_TIME, True);
+    FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, DURATION, True);
+    FIsEDExports := Ini.ReadBool(FIELDS_SECTION_NAME, END_TIME, False);
+    FIsSIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_INDEX, False);
+    FIsCIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_ID, False);
+    FIsFLExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_FLAGS, False);
   end
   else
   begin
     Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
     Ini.WriteBool(EXPORT_SECTION_NAME,ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
     Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
-    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsAccountNumberExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsDestNumberExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsStartDateTimeExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDurationExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEndDateTimeExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsIndexExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsIDExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFlagsExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsCNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
   end;
   Ini.Free;
 end;
@@ -152,14 +152,14 @@ begin
     Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
     Ini.WriteBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
     Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
-    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsAccountNumberExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsDestNumberExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsStartDateTimeExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDurationExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEndDateTimeExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsIndexExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsIDExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFlagsExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DEST_NUMBER, FIsCNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
   finally
     Ini.Free;
   end;
@@ -230,15 +230,16 @@ begin
     AssignFile(ExportFile, SetExportFileName);
     Rewrite(ExportFile);
     OneLine := '';
+    { TODO : Check out export fields }
     OneLine := OneLine + 'SI' + ';';
     OneLine := OneLine + 'CI' + ';';
     OneLine := OneLine + 'FL' + ';';
     OneLine := OneLine + 'AC' + ';';
     OneLine := OneLine + 'DN' + ';';
-    OneLine := OneLine + 'dest_number' + ';';
-    OneLine := OneLine + 'starts' + ';';
-    OneLine := OneLine + 'ends' + ';';
-    OneLine := OneLine + 'duration' + ';';
+    OneLine := OneLine + 'CN' + ';';
+    OneLine := OneLine + 'SD' + ';';
+    OneLine := OneLine + 'ED' + ';';
+    OneLine := OneLine + 'DU' + ';';
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
     Writeln(ExportFile, OneLine);
@@ -543,7 +544,7 @@ begin
   if LogLevel > 1 then
     Log(Format(GetAMessage('SI', lang), [SI]));
   if IsExportEnable then
-    if IsIndexExports then
+    if IsSIExports then
       OneLine := OneLine + IntToStr(SI) + ';';
 
   // CI - Call identifier
@@ -552,7 +553,7 @@ begin
   if LogLevel > 1 then
     Log(Format(GetAMessage('CI', lang), [CI]));
   if IsExportEnable then
-    if IsIDExports then
+    if IsCIExports then
       OneLine := OneLine + IntToStr(CI) + ';';
 
   // FL - Flags
@@ -564,12 +565,13 @@ begin
     Delete(FL, Length(FL), 1);
   if LogLevel > 1 then
     Log(Format(GetAMessage('FL', lang), [FL]));
-    if LogLevel > 2 then
+  if LogLevel > 2 then
   begin
     Log(Format('        F08-F01 : %s', [DecToBin(RecData[8])]));
     Log(Format('        F16-F09 : %s', [DecToBin(RecData[9])]));
     Log(Format('        F21-F17 : %s', [DecToBin(RecData[10])]));
   end;
+  { TODO : Add Flags to Export fields list }
 
   // SQ - Record sequence & CS - Charge status
   SQ := (RecData[11] shr 4) and $0F;
@@ -604,7 +606,7 @@ begin
     Log(Format(GetAMessage('DN', lang), [Copy(DN, 1, ACL), Copy(DN, ACL + 1, Length(DN) - ACL)]));
   end;
   if IsExportEnable then
-    if IsAccountNumberExports then
+    if IsDNExports then
       OneLine := OneLine + Copy(DN, 1, ACL) + ';' + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
 
 
