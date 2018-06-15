@@ -174,7 +174,7 @@ object frmSettings: TfrmSettings
         Top = 126
         Width = 240
         Height = 17
-        Caption = 'CS - Charge status'
+        Caption = 'CS - charge status'
         TabOrder = 6
       end
       object chkSQ: TCheckBox
@@ -190,11 +190,34 @@ object frmSettings: TfrmSettings
         Top = 34
         Width = 240
         Height = 17
-        Hint = 
-          'Include owner area code as a separate field (usually AC is empty' +
-          ')'
+        Hint = 'Include owner area code as a separate field'
         Caption = 'AC - area code'
         TabOrder = 10
+      end
+      object chkCU: TCheckBox
+        Left = 16
+        Top = 140
+        Width = 240
+        Height = 17
+        Caption = 'CU - charging units'
+        TabOrder = 11
+      end
+      object chkBS: TCheckBox
+        Left = 16
+        Top = 154
+        Width = 240
+        Height = 17
+        Caption = 'BS - basic service'
+        TabOrder = 12
+        OnClick = chkBSClick
+      end
+      object chkTS: TCheckBox
+        Left = 28
+        Top = 168
+        Width = 240
+        Height = 17
+        Caption = 'TS - teleservice'
+        TabOrder = 13
       end
     end
   end

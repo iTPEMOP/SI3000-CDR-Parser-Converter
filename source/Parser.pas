@@ -22,6 +22,9 @@ const
   RECORD_FLAGS: string = 'FL';
   RECORD_SEQUENCE: string = 'SQ';
   CHARGE_STATUS: string = 'CS';
+  CHARGING_UNITS: string = 'CU';
+  BASIC_SERVICE: string = 'BS';
+  TELESERVICE: string = 'TS';
 
   AvgRecLength: Byte = 134;
 
@@ -45,6 +48,9 @@ type
       FIsFLExports: Boolean;  // FL - flags
       FIsSQExports: Boolean;  // SQ - record sequence
       FIsCSExports: Boolean;  // CS - charge status
+      FIsCUExports: Boolean;  // CU - number of charging units
+      FIsBSExports: Boolean;  // BS - basic service
+      FIsTSExports: Boolean;  // TS - teleservice
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -89,6 +95,9 @@ type
       property IsFLExports: Boolean read FIsFLExports write FIsFLExports;
       property IsSQExports: Boolean read FIsSQExports write FIsSQExports;
       property IsCSExports: Boolean read FIsCSExports write FIsCSExports;
+      property IsCUExports: Boolean read FIsCUExports write FIsCUExports;
+      property IsBSExports: Boolean read FIsBSExports write FIsBSExports;
+      property IsTSExports: Boolean read FIsTSExports write FIsTSExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -119,10 +128,9 @@ procedure TParser.InitParams;
 var
   Ini: TIniFile;
 begin
-  FLogLevel := 2;
+  FLogLevel := 1;
   Ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'params.ini');
-  if FileExists(ExtractFilePath(ParamStr(0)) + 'params.ini') then
-  begin
+  try
     FLogLevel := Ini.ReadInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, 2);
     FIsExportEnable := Ini.ReadBool(EXPORT_SECTION_NAME, ENABLE_EXPORT_KEY_NAME, True);
     FExportPath := Ini.ReadString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, '');
@@ -137,25 +145,12 @@ begin
     FIsFLExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_FLAGS, False);
     FIsSQExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, False);
     FIsCSExports := Ini.ReadBool(FIELDS_SECTION_NAME, CHARGE_STATUS, False);
-  end
-  else
-  begin
-    Ini.WriteInteger(LOG_SECTION_NAME, LOG_LEVEL_KEY_NAME, FLogLevel);
-    Ini.WriteBool(EXPORT_SECTION_NAME,ENABLE_EXPORT_KEY_NAME, FIsExportEnable);
-    Ini.WriteString(EXPORT_SECTION_NAME, EXPORT_PATH_KEY_NAME, FExportPath);
-    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_AREA, FIsACExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, CALLED_NUMBER, FIsCNExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, FIsSQExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, CHARGE_STATUS, FIsCSExports);
+    FIsCUExports := Ini.ReadBool(FIELDS_SECTION_NAME, CHARGING_UNITS, False);
+    FIsBSExports := Ini.ReadBool(FIELDS_SECTION_NAME, BASIC_SERVICE, False);
+    FIsTSExports := Ini.ReadBool(FIELDS_SECTION_NAME, TELESERVICE, False);
+  finally
+    Ini.Free;
   end;
-  Ini.Free;
 end;
 
 procedure TParser.SaveParams;
@@ -178,6 +173,9 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_FLAGS, FIsFLExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_SEQUENCE, FIsSQExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CHARGE_STATUS, FIsCSExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CHARGING_UNITS, FIsCUExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, BASIC_SERVICE, FIsBSExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, TELESERVICE, FIsTSExports);
   finally
     Ini.Free;
   end;
@@ -185,15 +183,14 @@ end;
 
 function TParser.GetExportPath: string;
 begin
-  if (Length(FExportPath) > 0) and (Copy(FExportPath, Length(FExportPath), 1) <> '\') then
-    FExportPath := FExportPath + '\';
   Result := FExportPath;
 end;
 
 procedure TParser.SetExportPath(const APath: string);
 begin
-  if Length(APath) > 0 then
-    FExportPath := APath;
+  FExportPath := Trim(APath);
+  if (Length(FExportPath) > 1) and (Copy(FExportPath, Length(FExportPath), 1) <> '\') then
+    FExportPath := FExportPath + '\';
 end;
 
 function TParser.SetExportFileName: string;
@@ -271,7 +268,15 @@ begin
     if IsEDExports then
       OneLine := OneLine + 'I103_ED' + ';';
     if IsDUExports then
-      OneLine := OneLine + 'I104_DU' + ';';
+      OneLine := OneLine + 'I104_CU' + ';';
+    if IsBSExports then
+    begin
+      OneLine := OneLine + 'BS' + ';';
+      if IsTSExports then
+        OneLine := OneLine + 'TS' + ';';
+
+    end;
+
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
     Writeln(ExportFile, OneLine);
@@ -559,6 +564,9 @@ var
   ACL, DNL: Byte;
   AC_DN_len: Integer; // Owner's area code + derectiry number length
   DN: string;
+  currOffset: LongWord; // just remember RecData index
+  elementID, elementLen: LongWord; // elementLen keeps length in bytes without bytes before it (elementID, flags etc.)
+  CN : string;
 begin
   if LogLevel > 0 then
     Log('|');
@@ -606,7 +614,7 @@ begin
   end;
   if IsExportEnable then
     if IsFLExports then
-      OneLine := OneLine + '"' + FL + '"' + ';';
+      OneLine := OneLine + FL + ';';
 
   // SQ - Record sequence & CS - Charge status
   SQ := (RecData[11] shr 4) and $0F;
@@ -651,6 +659,131 @@ begin
       if IsACExports then
         OneLine := OneLine + Copy(DN, 1, ACL) + ';';
       OneLine := OneLine + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
+
+  { Working with dynamic part of the record }
+
+  if LogLevel > 2 then
+  begin
+    Log(GetAMessage('DYNAMIC_DATA', lang));
+  end;
+
+  currOffset := 13 + AC_DN_len;
+  while currOffset < Length(RecData) do
+  begin
+    elementID := RecData[currOffset];
+    case elementID of
+      100: // I100 CN - called number ($64)
+      begin
+        elementLen := RecData[currOffset + 1] div 2;
+        if RecData[currOffset + 1] mod 2 > 0 then
+          Inc(elementLen);
+        CN := '';
+        for i := 0 to elementLen - 1 do
+          CN := CN + IntToHex(RecData[currOffset + 2 + i], 2);
+        if (RecData[currOffset + 1] mod 2) > 0 then
+          CN := Copy(CN, 1, Length(CN) - 1);
+        if LogLevel > 0 then
+          Log(Format(GetAMessage('I100_CN', lang), [CN]));
+        if IsExportEnable then
+          if IsCNExports then
+            OneLine := OneLine + CN + ';';
+
+        currOffset := currOffset + 2 + elementLen;
+      end;
+
+      101: // I101 Call Accepting Party Number ($65)
+      begin
+        elementLen := RecData[currOffset + 2] div 2;
+        if RecData[currOffset + 2] mod 2 > 0 then
+          Inc(elementLen);
+        CN := '';
+        for i := 0 to elementLen - 1 do
+          CN := CN + IntToHex(RecData[currOffset + 3 + i], 2);
+        if (RecData[currOffset + 2] mod 2) > 0 then
+          CN := Copy(CN, 1, Length(CN) - 1);
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I101', lang), [CN, RecData[currOffset + 1]]));
+
+        currOffset := currOffset + 3 + elementLen;
+      end;
+
+      102: // I102 SD - start date and time ($66)
+      begin
+        elementLen := 8;
+        CN := Format('20%s-%s-%s %s:%s:%s.%s00', [
+          Format('%.*d', [2, RecData[currOffset + 1]]),
+          Format('%.*d', [2, RecData[currOffset + 2]]),
+          Format('%.*d', [2, RecData[currOffset + 3]]),
+          Format('%.*d', [2, RecData[currOffset + 4]]),
+          Format('%.*d', [2, RecData[currOffset + 5]]),
+          Format('%.*d', [2, RecData[currOffset + 6]]),
+          Format('%.*d', [1, RecData[currOffset + 7]])
+        ]);
+        if LogLevel > 0 then
+          Log(Format(GetAMessage('I102_SD', lang), [CN]));
+        if IsExportEnable then
+          if IsSDExports then
+            OneLine := OneLine + CN + ';';
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      103: // I103 ED - end date and time ($67)
+      begin
+        elementLen := 8;
+        CN := Format('20%s-%s-%s %s:%s:%s.%s00', [
+          Format('%.*d', [2, RecData[currOffset + 1]]),
+          Format('%.*d', [2, RecData[currOffset + 2]]),
+          Format('%.*d', [2, RecData[currOffset + 3]]),
+          Format('%.*d', [2, RecData[currOffset + 4]]),
+          Format('%.*d', [2, RecData[currOffset + 5]]),
+          Format('%.*d', [2, RecData[currOffset + 6]]),
+          Format('%.*d', [1, RecData[currOffset + 7]])
+        ]);
+        if LogLevel > 0 then
+          Log(Format(GetAMessage('I103_ED', lang), [CN]));
+        if IsExportEnable then
+          if IsEDExports then
+            OneLine := OneLine + CN + ';';
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      104: // I104 CU - end date and time ($68)
+      begin
+        elementLen := 3;
+        Byte4(SI)[0] := 0;
+        Byte4(SI)[1] := RecData[currOffset + 3];
+        Byte4(SI)[2] := RecData[currOffset + 2];
+        Byte4(SI)[3] := RecData[currOffset + 1];
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I104_CU', lang), [SI]));
+        if IsCUExports then
+          OneLine := OneLine + IntToStr(SI) + ';';
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      105: // I105 BS - basic service ($69)
+      begin
+        elementLen := 2;
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I105_BS', lang), [RecData[currOffset + 1], RecData[currOffset + 2]]));
+
+        if IsBSExports then
+        begin
+          OneLine := OneLine + IntToStr(RecData[currOffset + 1]) + ';';
+          if IsTSExports then
+            OneLine := OneLine + IntToStr(RecData[currOffset + 2]) + ';';
+        end;
+        currOffset := currOffset + 1 + elementLen;
+        currOffset := currOffset + 200;
+      end;
+
+      else
+        //Exit;
+    end;
+  end;
 
 
 

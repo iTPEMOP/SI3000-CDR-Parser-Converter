@@ -1,10 +1,12 @@
 unit I18NMessages;
 
-
 interface
 
+type
+  TMessagesCapacity = array[0..79] of string;
+
 const
-  CONST_NAMES: array[0..65] of string = (
+  CONST_NAMES: TMessagesCapacity = (
   { Log messages }
     'BEGIN_PARSE_en',
     'BEGIN_PARSE_ru',
@@ -58,6 +60,20 @@ const
     'DNL_ru',
     'DN_en',
     'DN_ru',
+    'DYNAMIC_DATA_en',
+    'DYNAMIC_DATA_ru',
+    'I100_CN_en',
+    'I100_CN_ru',
+    'I101_en',
+    'I101_ru',
+    'I102_SD_en',
+    'I102_SD_ru',
+    'I103_ED_en',
+    'I103_ED_ru',
+    'I104_CU_en',
+    'I104_CU_ru',
+    'I105_BS_en',
+    'I105_BS_ru',
 
   { Warnings }
     'WARNING_en',
@@ -75,7 +91,7 @@ const
     'LOG_HAS_BEEN_SAVED_en',
     'LOG_HAS_BEEN_SAVED_ru'
   );
-  CONST_VALUES: array[0..65] of string = (
+  CONST_VALUES: TMessagesCapacity = (
     'Begin parse "%s".',
     'Обрабатывается файл "%s".',
     'Parse completed succesfully.',
@@ -126,8 +142,22 @@ const
     '    ACL - длина кода зоны (цифр): %u',
     '    DNL - directory (owner) number length (digits): %u',
     '    DNL - длина абонентского номера (цифр): %u',
-    '  Owner''s full number. AC - area code: "%s", DN - directory number: "%s"',
-    '  Полный номер владельца. AC - код зоны: "%s", DN - номер телефона: "%s"',
+    '  Owner''s full number. AC - area code: %s, DN - directory number: %s',
+    '  Полный номер владельца. AC - код зоны: %s, DN - номер телефона: %s',
+    '                  ~~~~ Dynamic part part ~~~~',
+    '                  ~~~~ Динамическая часть данных ~~~~',
+    '    I100 CN - called number: %s',
+    '    I100 CN - вызываемый номер: %s',
+    '    I101 Call accepting party number: %s (AN=%u)',
+    '    I101 Номер, на который передан вызов: %s (AN=%u)',
+    '    I102 SD - start date and time: %s',
+    '    I102 SD - дата и время начала: %s',
+    '    I103 ED - end date and time: %s',
+    '    I103 ED - дата и время окончания: %s',
+    '    I104 CU - number of charging units: %u',
+    '    I104 CU - количество тарифных импульсов: %u',
+    '    I105 BS - basic service: %u; teleservice: %u',
+    '    I105 BS - базовая услуга: %u; телеуслуга: %u',
 
     'Warning',
     'Предупреждение',

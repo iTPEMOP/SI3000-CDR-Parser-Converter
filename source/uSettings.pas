@@ -31,12 +31,16 @@ type
     chkCS: TCheckBox;
     chkSQ: TCheckBox;
     chkAC: TCheckBox;
+    chkCU: TCheckBox;
+    chkBS: TCheckBox;
+    chkTS: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure pnlSelectDirClick(Sender: TObject);
     procedure chkDNClick(Sender: TObject);
+    procedure chkBSClick(Sender: TObject);
   private
     procedure InitInterface;
     procedure LoadSettings;
@@ -112,6 +116,9 @@ begin
 
   InitInterface;
   LoadSettings;
+
+  chkAC.Enabled := chkDN.Checked;
+  chkTS.Enabled := chkBS.Checked;
 end;
 
 procedure TfrmSettings.FormKeyPress(Sender: TObject; var Key: Char);
@@ -247,6 +254,9 @@ begin
     chkFL.Checked := parser.IsFLExports;
     chkSQ.Checked := parser.IsSQExports;
     chkCS.Checked := parser.IsCSExports;
+    chkCU.Checked := parser.IsCUExports;
+    chkBS.Checked := parser.IsBSExports;
+    chkTS.Checked := parser.IsTSExports;
   finally
     parser.Free;
   end;
@@ -256,12 +266,17 @@ end;
 procedure TfrmSettings.SaveSettings;
 var
   parser: TParser;
+
+  tt: string;
 begin
   { TODO : Needs to extract Parser settings as a separate class }
   parser := TParser.Create('', nil, nil);
   try
     parser.LogLevel := rgLogLevel.ItemIndex;
     parser.IsExportEnable := chkExportCSV.Checked;
+
+    tt := lbledtExportPath.Text;
+    parser.ExportPath := tt;
     parser.ExportPath := lbledtExportPath.Text;
     parser.IsACExports := chkAC.Checked;
     parser.IsDNExports := chkDN.Checked;
@@ -274,6 +289,9 @@ begin
     parser.IsFLExports := chkFL.Checked;
     parser.IsSQExports := chkSQ.Checked;
     parser.IsCSExports := chkCS.Checked;
+    parser.IsCUExports := chkCU.Checked;
+    parser.IsBSExports := chkBS.Checked;
+    parser.IsTSExports := chkTS.Checked;
     parser.SaveParams;
   finally
     parser.Free;
@@ -304,6 +322,13 @@ begin
   chkAC.Enabled := chkDN.Checked;
   if not chkDN.Checked then
     chkAC.Checked := False;
+end;
+
+procedure TfrmSettings.chkBSClick(Sender: TObject);
+begin
+  chkTS.Enabled := chkBS.Checked;
+  if not chkBS.Checked then
+    chkTS.Checked := False;
 end;
 
 end.

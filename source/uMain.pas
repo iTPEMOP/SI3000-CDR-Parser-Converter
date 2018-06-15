@@ -339,11 +339,15 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkCS_Caption', 'CS - charge status');
     if not IniFile.ValueExists('ru', 'frmSettings_chkCS_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkCS_Caption', 'CS - статус расчета');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCU_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCU_Caption', 'CU - charging units');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkCU_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCU_Caption', 'CU - количество тарифных импульсов');
 
     if not IniFile.ValueExists('en', 'frmSettings_chkAC_Hint') then
-      IniFile.WriteString('en', 'frmSettings_chkAC_Hint', '|Include owner''s area code as a separate field (usually AC is empty)');
+      IniFile.WriteString('en', 'frmSettings_chkAC_Hint', '|Include owner''s area code as a separate field');
     if not IniFile.ValueExists('ru', 'frmSettings_chkAC_Hint') then
-      IniFile.WriteString('ru', 'frmSettings_chkAC_Hint', '|Код зоны абонента (как правило, он пуст)');
+      IniFile.WriteString('ru', 'frmSettings_chkAC_Hint', '|Код зоны абонента (как отдельное поле)');
     if not IniFile.ValueExists('en', 'frmSettings_btnSave_Hint') then
       IniFile.WriteString('en', 'frmSettings_btnSave_Hint', '|Save settings and close window');
     if not IniFile.ValueExists('ru', 'frmSettings_btnSave_Hint') then
@@ -428,7 +432,7 @@ function GetLang: string;
 var
   IniFile: TIniFile;
 begin
-  Result := 'ru';
+  Result := 'en';
   IniFile := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'params.ini');
   try
     if FileExists(ExtractFilePath(ParamStr(0)) + 'params.ini') then
