@@ -16,34 +16,39 @@ type
     chkExportCSV: TCheckBox;
     lbledtExportPath: TLabeledEdit;
     pnlSelectDir: TPanel;
+    lblPathHint: TLabel;
     grpExportFields: TGroupBox;
     btnSave: TButton;
     btnCancel: TButton;
     chkDN: TCheckBox;
     chkCN: TCheckBox;
     chkSD: TCheckBox;
-    chkDU: TCheckBox;
     chkED: TCheckBox;
     chkSI: TCheckBox;
     chkCI: TCheckBox;
     chkFL: TCheckBox;
-    lblPathHint: TLabel;
     chkCS: TCheckBox;
     chkSQ: TCheckBox;
     chkAC: TCheckBox;
     chkCU: TCheckBox;
     chkBS: TCheckBox;
     chkTS: TCheckBox;
+    chkOC: TCheckBox;
+    chkTD: TCheckBox;
+    btnDefault: TButton;
+    btnClearAll: TButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure pnlSelectDirClick(Sender: TObject);
     procedure chkDNClick(Sender: TObject);
     procedure chkBSClick(Sender: TObject);
+    procedure btnClearAllClick(Sender: TObject);
+    procedure btnDefaultClick(Sender: TObject);
   private
     procedure InitInterface;
     procedure LoadSettings;
+    procedure ClearAllExportFields;
   public
     procedure SaveSettings;
   end;
@@ -133,11 +138,6 @@ begin
   pnlSelectDir.Visible := chkExportCSV.Checked;
   grpExportFields.Visible := chkExportCSV.Checked;
   lblPathHint.Visible := chkExportCSV.Checked;
-end;
-
-procedure TfrmSettings.FormResize(Sender: TObject);
-begin
-  btnCancel.Left := pnlBottom.Width - btnCancel.Width - 8;
 end;
 
 procedure TfrmSettings.InitInterface;
@@ -243,20 +243,21 @@ begin
     rgLogLevel.ItemIndex := parser.LogLevel;
     chkExportCSV.Checked := parser.IsExportEnable;
     lbledtExportPath.Text := parser.ExportPath;
-    chkAC.Checked := parser.IsACExports;
-    chkDN.Checked := parser.IsDNExports;
-    chkCN.Checked := parser.IsCNExports;
-    chkSD.Checked := parser.IsSDExports;
-    chkDU.Checked := parser.IsDUExports;
-    chkED.Checked := parser.IsEDExports;
     chkSI.Checked := parser.IsSIExports;
     chkCI.Checked := parser.IsCIExports;
     chkFL.Checked := parser.IsFLExports;
     chkSQ.Checked := parser.IsSQExports;
     chkCS.Checked := parser.IsCSExports;
+    chkAC.Checked := parser.IsACExports;
+    chkDN.Checked := parser.IsDNExports;
+    chkCN.Checked := parser.IsCNExports;
+    chkSD.Checked := parser.IsSDExports;
+    chkED.Checked := parser.IsEDExports;
     chkCU.Checked := parser.IsCUExports;
     chkBS.Checked := parser.IsBSExports;
     chkTS.Checked := parser.IsTSExports;
+    chkOC.Checked := parser.IsOCExports;
+    chkTD.Checked := parser.IsTDExports;
   finally
     parser.Free;
   end;
@@ -278,20 +279,21 @@ begin
     tt := lbledtExportPath.Text;
     parser.ExportPath := tt;
     parser.ExportPath := lbledtExportPath.Text;
-    parser.IsACExports := chkAC.Checked;
-    parser.IsDNExports := chkDN.Checked;
-    parser.IsCNExports := chkCN.Checked;
-    parser.IsSDExports := chkSD.Checked;
-    parser.IsDUExports := chkDU.Checked;
-    parser.IsEDExports := chkED.Checked;
     parser.IsSIExports := chkSI.Checked;
     parser.IsCIExports := chkCI.Checked;
     parser.IsFLExports := chkFL.Checked;
     parser.IsSQExports := chkSQ.Checked;
     parser.IsCSExports := chkCS.Checked;
+    parser.IsACExports := chkAC.Checked;
+    parser.IsDNExports := chkDN.Checked;
+    parser.IsCNExports := chkCN.Checked;
+    parser.IsSDExports := chkSD.Checked;
+    parser.IsEDExports := chkED.Checked;
     parser.IsCUExports := chkCU.Checked;
     parser.IsBSExports := chkBS.Checked;
     parser.IsTSExports := chkTS.Checked;
+    parser.IsOCExports := chkOC.Checked;
+    parser.IsTDExports := chkTD.Checked;
     parser.SaveParams;
   finally
     parser.Free;
@@ -329,6 +331,29 @@ begin
   chkTS.Enabled := chkBS.Checked;
   if not chkBS.Checked then
     chkTS.Checked := False;
+end;
+
+procedure TfrmSettings.ClearAllExportFields;
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+    if (Components[i].ClassType = TCheckBox) then
+      if (Components[i] as TCheckBox).Name <> 'chkExportCSV' then
+        (Components[i] as TCheckBox).Checked := False;
+end;
+
+procedure TfrmSettings.btnClearAllClick(Sender: TObject);
+begin
+  ClearAllExportFields;
+end;
+
+procedure TfrmSettings.btnDefaultClick(Sender: TObject);
+begin
+  ClearAllExportFields;
+  chkDN.Checked := True;
+  chkCN.Checked := True;
+  chkSD.Checked := True;
 end;
 
 end.

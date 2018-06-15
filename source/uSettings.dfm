@@ -1,13 +1,14 @@
 object frmSettings: TfrmSettings
-  Left = 675
-  Top = 194
+  Left = 580
+  Top = 105
   Width = 600
   Height = 600
+  BorderIcons = [biSystemMenu]
   Caption = 'frmSettings'
   Color = clBtnFace
   Constraints.MaxHeight = 600
   Constraints.MaxWidth = 600
-  Constraints.MinHeight = 366
+  Constraints.MinHeight = 600
   Constraints.MinWidth = 600
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +20,6 @@ object frmSettings: TfrmSettings
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
-  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object pnlClient: TPanel
@@ -54,14 +54,14 @@ object frmSettings: TfrmSettings
     end
     object pnlMiddle: TPanel
       Left = 16
-      Top = 168
+      Top = 120
       Width = 553
-      Height = 97
+      Height = 73
       Caption = 'pnlMiddle'
       TabOrder = 2
       object lblPathHint: TLabel
         Left = 24
-        Top = 72
+        Top = 56
         Width = 44
         Height = 13
         Caption = 'Path Hint'
@@ -86,8 +86,8 @@ object frmSettings: TfrmSettings
         TabOrder = 1
       end
       object pnlSelectDir: TPanel
-        Left = 376
-        Top = 32
+        Left = 408
+        Top = 8
         Width = 81
         Height = 41
         Caption = '...'
@@ -97,127 +97,153 @@ object frmSettings: TfrmSettings
       end
     end
     object grpExportFields: TGroupBox
-      Left = 16
-      Top = 280
-      Width = 545
-      Height = 225
+      Left = 0
+      Top = 192
+      Width = 593
+      Height = 337
       Caption = 'Export fields'
       TabOrder = 3
       Visible = False
       object chkDN: TCheckBox
         Left = 16
-        Top = 20
+        Top = 90
         Width = 240
         Height = 17
         Caption = 'DN -  directory number (owner number)'
-        TabOrder = 0
+        TabOrder = 5
         OnClick = chkDNClick
       end
       object chkCN: TCheckBox
         Left = 16
-        Top = 48
+        Top = 130
         Width = 240
         Height = 17
-        Caption = 'CN - called number'
-        TabOrder = 1
+        Caption = 'I100 CN - called number'
+        TabOrder = 7
       end
       object chkSD: TCheckBox
         Left = 16
-        Top = 62
+        Top = 144
         Width = 240
         Height = 17
-        Caption = 'SD - start date and time'
-        TabOrder = 2
-      end
-      object chkDU: TCheckBox
-        Left = 16
-        Top = 76
-        Width = 240
-        Height = 17
-        Caption = 'DU - call/service duration, sec.'
-        TabOrder = 3
+        Caption = 'I102 SD - start date and time'
+        TabOrder = 8
       end
       object chkED: TCheckBox
         Left = 16
-        Top = 98
+        Top = 158
         Width = 240
         Height = 17
-        Caption = 'ED - end date and time'
-        TabOrder = 4
+        Caption = 'I103 ED - end date and time'
+        TabOrder = 9
       end
       object chkSI: TCheckBox
-        Left = 276
+        Left = 16
         Top = 20
         Width = 240
         Height = 17
         Caption = 'SI - CDR index'
-        TabOrder = 7
+        TabOrder = 0
       end
       object chkCI: TCheckBox
-        Left = 276
+        Left = 16
         Top = 34
         Width = 240
         Height = 17
         Caption = 'CI - call identifier (Call ID)'
-        TabOrder = 8
+        TabOrder = 1
       end
       object chkFL: TCheckBox
-        Left = 276
+        Left = 16
         Top = 48
         Width = 240
         Height = 17
         Caption = 'FL - flags'
-        TabOrder = 9
+        TabOrder = 2
       end
       object chkCS: TCheckBox
         Left = 16
-        Top = 126
+        Top = 76
         Width = 240
         Height = 17
         Caption = 'CS - charge status'
-        TabOrder = 6
+        TabOrder = 4
       end
       object chkSQ: TCheckBox
         Left = 16
-        Top = 112
+        Top = 62
         Width = 240
         Height = 17
         Caption = 'SQ - record sequence'
-        TabOrder = 5
+        TabOrder = 3
       end
       object chkAC: TCheckBox
         Left = 28
-        Top = 34
+        Top = 104
         Width = 240
         Height = 17
         Hint = 'Include owner area code as a separate field'
         Caption = 'AC - area code'
-        TabOrder = 10
+        TabOrder = 6
       end
       object chkCU: TCheckBox
         Left = 16
-        Top = 140
+        Top = 172
         Width = 240
         Height = 17
-        Caption = 'CU - charging units'
-        TabOrder = 11
+        Caption = 'I104 CU - charging units'
+        TabOrder = 10
       end
       object chkBS: TCheckBox
         Left = 16
-        Top = 154
+        Top = 186
         Width = 240
         Height = 17
-        Caption = 'BS - basic service'
-        TabOrder = 12
+        Caption = 'I105 BS - basic service'
+        TabOrder = 11
         OnClick = chkBSClick
       end
       object chkTS: TCheckBox
         Left = 28
-        Top = 168
+        Top = 200
         Width = 240
         Height = 17
-        Caption = 'TS - teleservice'
+        Caption = 'I105 TS - teleservice'
+        TabOrder = 12
+      end
+      object chkOC: TCheckBox
+        Left = 16
+        Top = 214
+        Width = 240
+        Height = 17
+        Caption = 'I110 OC - origin category'
         TabOrder = 13
+      end
+      object chkTD: TCheckBox
+        Left = 16
+        Top = 228
+        Width = 240
+        Height = 17
+        Caption = 'I111 TD - tariff direction'
+        TabOrder = 14
+      end
+      object btnDefault: TButton
+        Left = 386
+        Top = 308
+        Width = 95
+        Height = 25
+        Caption = 'Set default'
+        TabOrder = 15
+        OnClick = btnDefaultClick
+      end
+      object btnClearAll: TButton
+        Left = 488
+        Top = 308
+        Width = 95
+        Height = 25
+        Caption = 'Clear all'
+        TabOrder = 16
+        OnClick = btnClearAllClick
       end
     end
   end
@@ -239,7 +265,7 @@ object frmSettings: TfrmSettings
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 112
+      Left = 508
       Top = 8
       Width = 75
       Height = 25

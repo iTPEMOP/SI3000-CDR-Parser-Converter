@@ -25,6 +25,8 @@ const
   CHARGING_UNITS: string = 'CU';
   BASIC_SERVICE: string = 'BS';
   TELESERVICE: string = 'TS';
+  ORIGIN_CATEGORY: string = 'OC';
+  TARIFF_DIRECTION: string = 'TD';
 
   AvgRecLength: Byte = 134;
 
@@ -51,6 +53,8 @@ type
       FIsCUExports: Boolean;  // CU - number of charging units
       FIsBSExports: Boolean;  // BS - basic service
       FIsTSExports: Boolean;  // TS - teleservice
+      FIsOCExports: Boolean;  // OC - origin category
+      FIsTDExports: Boolean;  // TD - tariff direction
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -98,6 +102,8 @@ type
       property IsCUExports: Boolean read FIsCUExports write FIsCUExports;
       property IsBSExports: Boolean read FIsBSExports write FIsBSExports;
       property IsTSExports: Boolean read FIsTSExports write FIsTSExports;
+      property IsOCExports: Boolean read FIsOCExports write FIsOCExports;
+      property IsTDExports: Boolean read FIsTDExports write FIsTDExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -148,6 +154,8 @@ begin
     FIsCUExports := Ini.ReadBool(FIELDS_SECTION_NAME, CHARGING_UNITS, False);
     FIsBSExports := Ini.ReadBool(FIELDS_SECTION_NAME, BASIC_SERVICE, False);
     FIsTSExports := Ini.ReadBool(FIELDS_SECTION_NAME, TELESERVICE, False);
+    FIsOCExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, False);
+    FIsTDExports := Ini.ReadBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, False);
   finally
     Ini.Free;
   end;
@@ -176,6 +184,8 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, CHARGING_UNITS, FIsCUExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, BASIC_SERVICE, FIsBSExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, TELESERVICE, FIsTSExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, FIsOCExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, FIsTDExports);
   finally
     Ini.Free;
   end;
@@ -271,11 +281,14 @@ begin
       OneLine := OneLine + 'I104_CU' + ';';
     if IsBSExports then
     begin
-      OneLine := OneLine + 'BS' + ';';
+      OneLine := OneLine + 'I105_BS' + ';';
       if IsTSExports then
-        OneLine := OneLine + 'TS' + ';';
-
+        OneLine := OneLine + 'I105_TS' + ';';
     end;
+    if IsOCExports then
+      OneLine := OneLine + 'I110_OC' + ';';
+    if IsTDExports then
+      OneLine := OneLine + 'I111_TD' + ';';
 
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
@@ -777,11 +790,76 @@ begin
             OneLine := OneLine + IntToStr(RecData[currOffset + 2]) + ';';
         end;
         currOffset := currOffset + 1 + elementLen;
-        currOffset := currOffset + 200;
       end;
 
+      106: // I106 SS -  supplementary service used by calling subscriber ($6A)
+      begin
+        elementLen := 1;
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I106_SS', lang), [RecData[currOffset + 1]]));
+
+        { TODO 1 -cso-so : Maybe add to export }
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      107: // I107 SS -  supplementary service used by called subscriber ($6B)
+      begin
+        elementLen := 1;
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I107_SS', lang), [RecData[currOffset + 1]]));
+
+        { TODO 1 -cso-so : Maybe add to export }
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      108: // I108 SS -  supplementary service used by called subscriber ($6Ñ)
+      begin
+        elementLen := 2;
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I108_TI', lang), [RecData[currOffset + 1]]));
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I108_SS', lang), [RecData[currOffset + 2]]));
+
+        { TODO 1 -cso-so : Maybe add to export }
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      109: // Dialed digits ($6D)
+      begin
+        elementLen := RecData[currOffset + 1];
+        // go through this element
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      110: // I110 OC - origin category ($6E)
+      begin
+        elementLen := 1;
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I110_OC', lang), [RecData[currOffset + 1]]));
+        if IsExportEnable then
+          if IsOCExports then
+            OneLine := OneLine + IntToStr(RecData[currOffset + 1]);
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      111: // I111 TD - tariff direction ($6F)
+      begin
+        elementLen := 1;
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I111_TD', lang), [RecData[currOffset + 1]]));
+        if IsExportEnable then
+          if IsTDExports then
+            OneLine := OneLine + IntToStr(RecData[currOffset + 1]);
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+
+
       else
-        //Exit;
+        currOffset := 250;
     end;
   end;
 

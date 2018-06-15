@@ -3,7 +3,7 @@ unit I18NMessages;
 interface
 
 type
-  TMessagesCapacity = array[0..79] of string;
+  TMessagesCapacity = array[0..91] of string;
 
 const
   CONST_NAMES: TMessagesCapacity = (
@@ -74,6 +74,18 @@ const
     'I104_CU_ru',
     'I105_BS_en',
     'I105_BS_ru',
+    'I106_SS_en',
+    'I106_SS_ru',
+    'I107_SS_en',
+    'I107_SS_ru',
+    'I108_TI_en',
+    'I108_TI_ru',
+    'I108_SS_en',
+    'I108_SS_ru',
+    'I110_OC_en',
+    'I110_OC_ru',
+    'I111_TD_en',
+    'I111_TD_ru',
 
   { Warnings }
     'WARNING_en',
@@ -158,6 +170,18 @@ const
     '    I104 CU - количество тарифных импульсов: %u',
     '    I105 BS - basic service: %u; teleservice: %u',
     '    I105 BS - базовая услуга: %u; телеуслуга: %u',
+    '    I106 SS - supplementary service used by called subscriber: %u',
+    '    I106 SS - дополнительная услуга у вызывающего абонента: %u',
+    '    I107 SS - supplementary service used by calling subscriber: %u',
+    '    I107 SS - дополнительная услуга у вызываемого абонента: %u',
+    '    I108 TI - type of input: %u',
+    '    I108 TI - тип ввода: %u',
+    '    I108 SS - type of input: %u',
+    '    I108 SS - дополнительная услуга: %u',
+    '    I110 OC - origin category: %u',
+    '    I110 OC - категория источника вызова: %u',
+    '    I111 TD - tariff direction: %u',
+    '    I111 TD - тарифное направление: %u',
 
     'Warning',
     'Предупреждение',
