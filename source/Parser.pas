@@ -27,7 +27,7 @@ const
   ORIGIN_CATEGORY: string = 'I110_OC';
   TARIFF_DIRECTION: string = 'I111_TD';
   CALL_DURATION: string = 'I115_DU';
-  ORIGINAL_CALLING_NUMBER : string = 'I119_OCN';
+//  ORIGINAL_CALLING_NUMBER : string = 'I119_OCN';
   CAUSE_VALUE: string = 'I121_CV';
   LOCATION: string = 'I121_LO';
 
@@ -58,7 +58,7 @@ type
       FIsOCExports: Boolean;  // OC - origin category
       FIsTDExports: Boolean;  // TD - tariff direction
       FIsDUExports: Boolean;  // DU - call/service duration, sec.
-      FIsOCNExports: Boolean; // OCN - original calling party number
+//      FIsOCNExports: Boolean; // OCN - original calling party number
       FIsCVExports: Boolean; // Call release cause: CV - cause value
       FIsLOExports: Boolean; // Call release cause: LO - location
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
@@ -110,7 +110,7 @@ type
       property IsOCExports: Boolean read FIsOCExports write FIsOCExports;
       property IsTDExports: Boolean read FIsTDExports write FIsTDExports;
       property IsDUExports: Boolean read FIsDUExports write FIsDUExports;
-      property IsOCNExports: Boolean read FIsOCNExports write FIsOCNExports;
+//      property IsOCNExports: Boolean read FIsOCNExports write FIsOCNExports;
       property IsCVExports: Boolean read FIsCVExports write FIsCVExports;
       property IsLOExports: Boolean read FIsLOExports write FIsLOExports;
 
@@ -165,7 +165,7 @@ begin
     FIsOCExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, False);
     FIsTDExports := Ini.ReadBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, False);
     FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, CALL_DURATION, True);
-    FIsOCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, False);
+//    FIsOCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, False);
     FIsCVExports := Ini.ReadBool(FIELDS_SECTION_NAME, CAUSE_VALUE, False);
     FIsLOExports := Ini.ReadBool(FIELDS_SECTION_NAME, LOCATION, False);
   finally
@@ -198,7 +198,7 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, FIsOCExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, FIsTDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CALL_DURATION, FIsDUExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, FIsOCNExports);
+//    Ini.WriteBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, FIsOCNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CAUSE_VALUE, FIsCVExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, LOCATION, FIsLOExports);
   finally
@@ -306,8 +306,8 @@ begin
       OneLine := OneLine + 'I111_TD' + ';';
     if IsDUExports then
       OneLine := OneLine + 'I115_DU' + ';';
-    if IsOCNExports then
-      OneLine := OneLine + 'I119_OCN' + ';';
+//    if IsOCNExports then
+//      OneLine := OneLine + 'I119_OCN' + ';';
     if IsCVExports then
     begin
       OneLine := OneLine + 'I121_CV' + ';';
@@ -699,7 +699,7 @@ begin
       if IsACExports then
         OneLine := OneLine + Copy(DN, 1, ACL) + ';';
       OneLine := OneLine + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
-    end;  
+    end;
 
   { Working with dynamic part of the record }
 
@@ -1002,10 +1002,11 @@ begin
             DN := Copy(DN, 1, Length(DN) - 1);
           Log(Format(GetAMessage('I119_OCN', lang), [DN]));
         end;
+        {
         if IsExportEnable then
           if IsOCNExports then
             OneLine := OneLine + DN + ';';
-
+        }
         currOffset := currOffset + elementLen;
       end;
 

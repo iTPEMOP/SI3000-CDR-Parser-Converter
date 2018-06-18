@@ -259,6 +259,7 @@ object frmSettings: TfrmSettings
         Width = 561
         Height = 17
         Caption = 'I119 OCN - original calling party number'
+        Enabled = False
         TabOrder = 16
       end
       object chkCV: TCheckBox

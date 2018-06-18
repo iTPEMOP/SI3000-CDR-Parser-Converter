@@ -265,7 +265,7 @@ begin
     chkOC.Checked := parser.IsOCExports;
     chkTD.Checked := parser.IsTDExports;
     chkDU.Checked := parser.IsDUExports;
-    chkOCN.Checked := parser.IsOCNExports;
+//    chkOCN.Checked := parser.IsOCNExports;
     chkCV.Checked := parser.IsCVExports;
     chkLO.Checked := parser.IsLOExports;
   finally
@@ -305,7 +305,7 @@ begin
     parser.IsOCExports := chkOC.Checked;
     parser.IsTDExports := chkTD.Checked;
     parser.IsDUExports := chkDU.Checked;
-    parser.IsOCNExports := chkOCN.Checked;
+//    parser.IsOCNExports := chkOCN.Checked;
     parser.IsCVExports := chkCV.Checked;
     parser.IsLOExports := chkLO.Checked;
     parser.SaveParams;
