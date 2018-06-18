@@ -3,7 +3,7 @@ unit I18NMessages;
 interface
 
 type
-  TMessagesCapacity = array[0..91] of string;
+  TMessagesCapacity = array[0..107] of string;
 
 const
   CONST_NAMES: TMessagesCapacity = (
@@ -86,6 +86,22 @@ const
     'I110_OC_ru',
     'I111_TD_en',
     'I111_TD_ru',
+    'I113_ITD_en',
+    'I113_ITD_ru',
+    'I114_OTD_en',
+    'I114_OTD_ru',
+    'I115_DU_en',
+    'I115_DU_ru',
+    'I116_CS_en',
+    'I116_CS_ru',
+    'I117_BC_en',
+    'I117_BC_ru',
+    'I118_CAC_en',
+    'I118_CAC_ru',
+    'I119_OCN_en',
+    'I119_OCN_ru',
+    'SKIPPED_ITEM_IS_FOUND_en',
+    'SKIPPED_ITEM_IS_FOUND_ru',
 
   { Warnings }
     'WARNING_en',
@@ -182,6 +198,22 @@ const
     '    I110 OC - категория источника вызова: %u',
     '    I111 TD - tariff direction: %u',
     '    I111 TD - тарифное направление: %u',
+    '    I113 ITD - incoming trunk data. TG (trunk group ID): %u, TI (trunk ID): %u, MI (module ID): %u, PI (port ID): %u, CI (channel ID): %u',
+    '    I113 ITD - ID входящей соединительной линии. TG (ID группы): %u, TI (ID линии): %u, MI (ID модуля): %u, PI (ID порта): %u, CI (ID канала): %u',
+    '    I114 OTD - outgoing trunk data. TG (trunk group ID): %u, TI (trunk ID): %u, MI (module ID): %u, PI (port ID): %u, CI (channel ID): %u',
+    '    I114 OTD - ID исходящей соединительной линии. TG (ID группы): %u, TI (ID линии): %u, MI (ID модуля): %u, PI (ID порта): %u, CI (ID канала): %u',
+    '    I115 DU - call/supplementary service duration (sec): %u',
+    '    I115 DU - продолжительность вызова или время пользования услугой (сек.): %u',
+    '    I116 Checksum: %u',
+    '    I116 Контрольная сумма: %u',
+    '    I117 Business and Centrex group ID.  Business group ID (BGID): %u. Centrex group ID (CGID): %u',
+    '    I117 ID бизнес и центрекс групп.  Бизнес-групп ID (BGID): %u. Центрекс-групп IDy (CGID): %u',
+    '    I118 Carrier access code (CAC). CAC Type: %u. CAC Prefix: %u. CAC Number: %s',
+    '    I118 Код оператора (CAC). CAC-nип: %u. CAC-префикс: %u. Номер CAC: %s',
+    '    I119 Original calling party number: %s',
+    '    I119 Исходный номер вызывающего абонента: %s',
+    ' !! An unprocessed item is found and skipped: %u (0x%x) !!',
+    ' !! Найден и пропущен необрабатываемый элемент: %u (0x%x) !!',
 
     'Warning',
     'Предупреждение',

@@ -37,6 +37,8 @@ type
     chkTD: TCheckBox;
     btnDefault: TButton;
     btnClearAll: TButton;
+    chkDU: TCheckBox;
+    chkOCN: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
@@ -258,6 +260,8 @@ begin
     chkTS.Checked := parser.IsTSExports;
     chkOC.Checked := parser.IsOCExports;
     chkTD.Checked := parser.IsTDExports;
+    chkDU.Checked := parser.IsDUExports;
+    chkOCN.Checked := parser.IsOCNExports;
   finally
     parser.Free;
   end;
@@ -294,6 +298,8 @@ begin
     parser.IsTSExports := chkTS.Checked;
     parser.IsOCExports := chkOC.Checked;
     parser.IsTDExports := chkTD.Checked;
+    parser.IsDUExports := chkDU.Checked;
+    parser.IsOCNExports := chkOCN.Checked;
     parser.SaveParams;
   finally
     parser.Free;

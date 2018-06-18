@@ -11,22 +11,23 @@ const
   LOG_LEVEL_KEY_NAME: string = 'Log level';
   ENABLE_EXPORT_KEY_NAME: string = 'Enable export';
   EXPORT_PATH_KEY_NAME: string = 'Path';
-  ACCOUNT_AREA: string = 'AC';
-  ACCOUNT_NUMBER: string = 'DN';
-  CALLED_NUMBER: string = 'CN';
-  START_TIME: string = 'SD';
-  DURATION: string = 'DU';
-  END_TIME: string = 'ED';
-  RECORD_INDEX: string = 'SI';
-  RECORD_ID: string = 'CI';
-  RECORD_FLAGS: string = 'FL';
-  RECORD_SEQUENCE: string = 'SQ';
-  CHARGE_STATUS: string = 'CS';
-  CHARGING_UNITS: string = 'CU';
-  BASIC_SERVICE: string = 'BS';
-  TELESERVICE: string = 'TS';
-  ORIGIN_CATEGORY: string = 'OC';
-  TARIFF_DIRECTION: string = 'TD';
+  RECORD_INDEX: string = 'R200_SI';
+  RECORD_ID: string = 'R200_CI';
+  RECORD_FLAGS: string = 'R200_FL';
+  RECORD_SEQUENCE: string = 'R200_SQ';
+  CHARGE_STATUS: string = 'R200_CS';
+  ACCOUNT_AREA: string = 'R200_AC';
+  ACCOUNT_NUMBER: string = 'R200_DN';
+  CALLED_NUMBER: string = 'I100_CN';
+  START_TIME: string = 'I102_SD';
+  END_TIME: string = 'I103_ED';
+  CHARGING_UNITS: string = 'I104_CU';
+  BASIC_SERVICE: string = 'I105_BS';
+  TELESERVICE: string = 'I105_TS';
+  ORIGIN_CATEGORY: string = 'I110_OC';
+  TARIFF_DIRECTION: string = 'I111_TD';
+  CALL_DURATION: string = 'I115_DU';
+  ORIGINAL_CALLING_NUMBER : string = 'I119_OCN';
 
   AvgRecLength: Byte = 134;
 
@@ -39,22 +40,23 @@ type
       // Parser settings
       FIsExportEnable: Boolean;
       FExportPath: string;
-      FIsACExports: Boolean;  // AC - owner's area code
-      FIsDNExports: Boolean;  // DN - directory number (owner's number)
-      FIsCNExports: Boolean;  // CN - called number
-      FIsSDExports: Boolean;  // SD - call starts date & time
-      FIsDUExports: Boolean;  // DU - call/service duration, sec.
       FIsEDExports: Boolean;  // SD - call ends date & time
       FIsSIExports: Boolean;  // SI - serial CDR index
       FIsCIExports: Boolean;  // CI - call ID
       FIsFLExports: Boolean;  // FL - flags
       FIsSQExports: Boolean;  // SQ - record sequence
       FIsCSExports: Boolean;  // CS - charge status
+      FIsACExports: Boolean;  // AC - owner's area code
+      FIsDNExports: Boolean;  // DN - directory number (owner's number)
+      FIsCNExports: Boolean;  // CN - called number
+      FIsSDExports: Boolean;  // SD - call starts date & time
       FIsCUExports: Boolean;  // CU - number of charging units
       FIsBSExports: Boolean;  // BS - basic service
       FIsTSExports: Boolean;  // TS - teleservice
       FIsOCExports: Boolean;  // OC - origin category
       FIsTDExports: Boolean;  // TD - tariff direction
+      FIsDUExports: Boolean;  // DU - call/service duration, sec.
+      FIsOCNExports: Boolean; // OCN - original calling party number
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -92,7 +94,6 @@ type
       property IsDNExports: Boolean read FIsDNExports write FIsDNExports;
       property IsCNExports: Boolean read FIsCNExports write FIsCNExports;
       property IsSDExports: Boolean read FIsSDExports write FIsSDExports;
-      property IsDUExports: Boolean read FIsDUExports write FIsDUExports;
       property IsEDExports: Boolean read FIsEDExports write FIsEDExports;
       property IsSIExports: Boolean read FIsSIExports write FIsSIExports;
       property IsCIExports: Boolean read FIsCIExports write FIsCIExports;
@@ -104,6 +105,8 @@ type
       property IsTSExports: Boolean read FIsTSExports write FIsTSExports;
       property IsOCExports: Boolean read FIsOCExports write FIsOCExports;
       property IsTDExports: Boolean read FIsTDExports write FIsTDExports;
+      property IsDUExports: Boolean read FIsDUExports write FIsDUExports;
+      property IsOCNExports: Boolean read FIsOCNExports write FIsOCNExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -144,7 +147,6 @@ begin
     FIsDNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, True);
     FIsCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, CALLED_NUMBER, True);
     FIsSDExports := Ini.ReadBool(FIELDS_SECTION_NAME, START_TIME, True);
-    FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, DURATION, True);
     FIsEDExports := Ini.ReadBool(FIELDS_SECTION_NAME, END_TIME, False);
     FIsSIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_INDEX, False);
     FIsCIExports := Ini.ReadBool(FIELDS_SECTION_NAME, RECORD_ID, False);
@@ -156,6 +158,8 @@ begin
     FIsTSExports := Ini.ReadBool(FIELDS_SECTION_NAME, TELESERVICE, False);
     FIsOCExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, False);
     FIsTDExports := Ini.ReadBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, False);
+    FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, CALL_DURATION, True);
+    FIsOCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, False);
   finally
     Ini.Free;
   end;
@@ -174,7 +178,6 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, ACCOUNT_NUMBER, FIsDNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CALLED_NUMBER, FIsCNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, START_TIME, FIsSDExports);
-    Ini.WriteBool(FIELDS_SECTION_NAME, DURATION, FIsDUExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, END_TIME, FIsEDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_INDEX, FIsSIExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, RECORD_ID, FIsCIExports);
@@ -186,6 +189,8 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, TELESERVICE, FIsTSExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, ORIGIN_CATEGORY, FIsOCExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, FIsTDExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CALL_DURATION, FIsDUExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, FIsOCNExports);
   finally
     Ini.Free;
   end;
@@ -256,20 +261,20 @@ begin
     Rewrite(ExportFile);
     OneLine := '';
     if IsSIExports then
-      OneLine := OneLine + 'SI' + ';';
+      OneLine := OneLine + 'R200_SI' + ';';
     if IsCIExports then
-      OneLine := OneLine + 'CI' + ';';
+      OneLine := OneLine + 'R200_CI' + ';';
     if IsFLExports then
-      OneLine := OneLine + 'FL' + ';';
+      OneLine := OneLine + 'R200_FL' + ';';
     if IsSQExports then
-      OneLine := OneLine + 'SQ' + ';';
+      OneLine := OneLine + 'R200_SQ' + ';';
     if IsCSExports then
-      OneLine := OneLine + 'CS' + ';';
+      OneLine := OneLine + 'R200_CS' + ';';
     if IsDNExports then
     begin
       if IsACExports then
-        OneLine := OneLine + 'AC' + ';';
-      OneLine := OneLine + 'DN' + ';';
+        OneLine := OneLine + 'R200_AC' + ';';
+      OneLine := OneLine + 'R200_DN' + ';';
     end;
     if IsCNExports then
       OneLine := OneLine + 'I100_CN' + ';';
@@ -277,7 +282,7 @@ begin
       OneLine := OneLine + 'I102_SD' + ';';
     if IsEDExports then
       OneLine := OneLine + 'I103_ED' + ';';
-    if IsDUExports then
+    if IsCUExports then
       OneLine := OneLine + 'I104_CU' + ';';
     if IsBSExports then
     begin
@@ -289,6 +294,8 @@ begin
       OneLine := OneLine + 'I110_OC' + ';';
     if IsTDExports then
       OneLine := OneLine + 'I111_TD' + ';';
+    if IsDUExports then
+      OneLine := OneLine + 'I115_DU' + ';';
 
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
@@ -577,9 +584,10 @@ var
   ACL, DNL: Byte;
   AC_DN_len: Integer; // Owner's area code + derectiry number length
   DN: string;
-  currOffset: LongWord; // just remember RecData index
-  elementID, elementLen: LongWord; // elementLen keeps length in bytes without bytes before it (elementID, flags etc.)
+  currOffset: Integer; // just remember RecData index
+  elementID, elementLen: Integer; // elementLen keeps length in bytes without bytes before it (elementID, flags etc.)
   CN : string;
+
 begin
   if LogLevel > 0 then
     Log('|');
@@ -762,17 +770,13 @@ begin
         currOffset := currOffset + 1 + elementLen;
       end;
 
-      104: // I104 CU - end date and time ($68)
+      104: // I104 CU - number of charging units  ($68)
       begin
         elementLen := 3;
-        Byte4(SI)[0] := 0;
-        Byte4(SI)[1] := RecData[currOffset + 3];
-        Byte4(SI)[2] := RecData[currOffset + 2];
-        Byte4(SI)[3] := RecData[currOffset + 1];
         if LogLevel > 1 then
-          Log(Format(GetAMessage('I104_CU', lang), [SI]));
+          Log(Format(GetAMessage('I104_CU', lang), [(RecData[currOffset + 1] shl 16) + (RecData[currOffset + 2] shl 8) + (RecData[currOffset + 3])]));
         if IsCUExports then
-          OneLine := OneLine + IntToStr(SI) + ';';
+          OneLine := OneLine + IntToStr((RecData[currOffset + 1] shl 16) + (RecData[currOffset + 2] shl 8) + (RecData[currOffset + 3])) + ';';
 
         currOffset := currOffset + 1 + elementLen;
       end;
@@ -789,6 +793,7 @@ begin
           if IsTSExports then
             OneLine := OneLine + IntToStr(RecData[currOffset + 2]) + ';';
         end;
+
         currOffset := currOffset + 1 + elementLen;
       end;
 
@@ -841,7 +846,8 @@ begin
           Log(Format(GetAMessage('I110_OC', lang), [RecData[currOffset + 1]]));
         if IsExportEnable then
           if IsOCExports then
-            OneLine := OneLine + IntToStr(RecData[currOffset + 1]);
+            OneLine := OneLine + IntToStr(RecData[currOffset + 1]) + ';';
+
         currOffset := currOffset + 1 + elementLen;
       end;
 
@@ -852,10 +858,146 @@ begin
           Log(Format(GetAMessage('I111_TD', lang), [RecData[currOffset + 1]]));
         if IsExportEnable then
           if IsTDExports then
-            OneLine := OneLine + IntToStr(RecData[currOffset + 1]);
+            OneLine := OneLine + IntToStr(RecData[currOffset + 1]) + ';';
         currOffset := currOffset + 1 + elementLen;
       end;
 
+      112: // I112 FC - failure cause  ($70)
+      { This element is no longer used. It was replaced by I121 Call Release Cause. }
+      begin
+        elementLen := 1;
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      113: // I113 ITD - incoming trunk data  ($71)
+      begin
+        elementLen := 8;
+        if LogLevel > 2 then
+        begin
+          Log(Format(GetAMessage('I113_ITD', lang), [
+            (RecData[currOffset + 1] shl 8) + RecData[currOffset + 2],
+            (RecData[currOffset + 3] shl 8) + RecData[currOffset + 4],
+            RecData[currOffset + 5],
+            (RecData[currOffset + 6] shl 8) + RecData[currOffset + 7],
+            RecData[currOffset + 8]
+          ]));
+        end;
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      114: // I114 OTD - outgoing trunk data  ($72)
+      begin
+        elementLen := 8;
+        if LogLevel > 2 then
+        begin
+          Log(Format(GetAMessage('I114_OTD', lang), [
+            (RecData[currOffset + 1] shl 8) + RecData[currOffset + 2],
+            (RecData[currOffset + 3] shl 8) + RecData[currOffset + 4],
+            RecData[currOffset + 5],
+            (RecData[currOffset + 6] shl 8) + RecData[currOffset + 7],
+            RecData[currOffset + 8]
+          ]));
+        end;
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      115: // I115 DU - call/service duration  ($73)
+      begin
+        elementLen := 4;
+        if LogLevel > 0 then
+        begin
+          // get DU in msec to SI variale
+          SI :=
+            (RecData[currOffset + 1] shl 24) +
+            (RecData[currOffset + 2] shl 16) +
+            (RecData[currOffset + 3] shl 8) +
+            (RecData[currOffset + 4]);
+          // msec -> sec
+          CI := SI mod 1000;
+          SI := SI div 1000;
+          if CI >= 500 then
+            Inc(SI);
+          Log(Format(GetAMessage('I115_DU', lang), [SI]));
+        end;
+        if IsExportEnable then
+          if IsDUExports then
+            OneLine := OneLine + IntToStr(SI) + ';';
+
+        currOffset := currOffset + 1 + elementLen;
+      end;
+
+      116: // I116 Checksum ($74)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I116_CS', lang), [(RecData[currOffset + 2] shl 8) + RecData[currOffset + 3]]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      117: // I117 Business and Centrex group id ($75)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I117_BC', lang), [
+            (RecData[currOffset + 2] shl 24) + (RecData[currOffset + 3] shl 16) + (RecData[currOffset + 4] shl 8) + (RecData[currOffset + 5]), // BGID
+            (RecData[currOffset + 6] shl 24) + (RecData[currOffset + 7] shl 16) + (RecData[currOffset + 8] shl 8) + (RecData[currOffset + 9])  // CGID
+            ]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      118: // I118 Carrier access code ($76)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 1 then
+        begin
+          ACL := (RecData[currOffset + 2]) and $07;
+          CN := '';
+          for i := 0 to elementLen - 3 do
+            CN := CN + IntToHex(RecData[currOffset + 3 + i], 2);
+          if (ACL mod 2) > 0 then
+            CN := Copy(CN, 1, Length(CN) - 1);
+          Log(Format(GetAMessage('I118_CAC', lang), [
+            (RecData[currOffset + 2] shr 5) and  $07, // CAC type
+            ((RecData[currOffset + 2] shl 3) shr 3) and $03, // CAC prefix
+            CN
+          ]));
+        end;
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      119: // I119 Original Calling Party Number ($77)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 1 then
+        begin
+          DN := '';
+          for i := 0 to RecData[2] - 1 do
+            DN := DN + IntToHex(RecData[i + 2], 2);
+          if (RecData[2] mod 2) > 0 then
+            DN := Copy(DN, 1, Length(DN) - 1);
+          Log(Format(GetAMessage('I119_OCN', lang), [DN]));
+        end;
+        if IsExportEnable then
+          if IsOCNExports then
+            OneLine := OneLine + DN + ';';
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      120: // I120 Prepaid account recharge data ($78)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + elementLen;
+      end
 
 
       else

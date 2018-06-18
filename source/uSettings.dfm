@@ -233,7 +233,7 @@ object frmSettings: TfrmSettings
         Width = 95
         Height = 25
         Caption = 'Set default'
-        TabOrder = 15
+        TabOrder = 17
         OnClick = btnDefaultClick
       end
       object btnClearAll: TButton
@@ -242,8 +242,24 @@ object frmSettings: TfrmSettings
         Width = 95
         Height = 25
         Caption = 'Clear all'
-        TabOrder = 16
+        TabOrder = 18
         OnClick = btnClearAllClick
+      end
+      object chkDU: TCheckBox
+        Left = 16
+        Top = 242
+        Width = 561
+        Height = 17
+        Caption = 'I115 DU - call/service duration, sec.'
+        TabOrder = 15
+      end
+      object chkOCN: TCheckBox
+        Left = 16
+        Top = 256
+        Width = 561
+        Height = 17
+        Caption = 'I119 OCN - original calling party number'
+        TabOrder = 16
       end
     end
   end

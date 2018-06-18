@@ -363,11 +363,14 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkTD_Caption', 'I111 TD - tariff direction');
     if not IniFile.ValueExists('ru', 'frmSettings_chkTD_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkTD_Caption', 'I111 TD - направление вызова');
-
     if not IniFile.ValueExists('en', 'frmSettings_chkDU_Caption') then
       IniFile.WriteString('en', 'frmSettings_chkDU_Caption', 'I115 DU - call/service duration, sec.');
     if not IniFile.ValueExists('ru', 'frmSettings_chkDU_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkDU_Caption', 'I115 DU - продолжительность вызова/услуги, сек.');
+    if not IniFile.ValueExists('en', 'frmSettings_chkOCN_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkOCN_Caption', 'I119 OCN - original calling party number');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkOCN_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkOCN_Caption', 'I119 OCN - исходный номер вызывающего абонента');
 
 
 
