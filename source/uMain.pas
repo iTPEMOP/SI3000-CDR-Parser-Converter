@@ -371,6 +371,14 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkOCN_Caption', 'I119 OCN - original calling party number');
     if not IniFile.ValueExists('ru', 'frmSettings_chkOCN_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkOCN_Caption', 'I119 OCN - исходный номер вызывающего абонента');
+    if not IniFile.ValueExists('en', 'frmSettings_chkCV_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkCV_Caption', 'I121 CV - call release cause value');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkVC_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkCV_Caption', 'I121 CV - код причины разъединения вызова');
+    if not IniFile.ValueExists('en', 'frmSettings_chkLO_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkLO_Caption', 'I121 LO - location');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkLO_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkLO_Caption', 'I121 LO - местоположение');
 
 
 

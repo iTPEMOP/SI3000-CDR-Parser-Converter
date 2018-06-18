@@ -3,7 +3,7 @@ unit I18NMessages;
 interface
 
 type
-  TMessagesCapacity = array[0..107] of string;
+  TMessagesCapacity = array[0..109] of string;
 
 const
   CONST_NAMES: TMessagesCapacity = (
@@ -102,6 +102,8 @@ const
     'I119_OCN_ru',
     'SKIPPED_ITEM_IS_FOUND_en',
     'SKIPPED_ITEM_IS_FOUND_ru',
+    'I121_CRC_en',
+    'I121_CRC_ru',
 
   { Warnings }
     'WARNING_en',
@@ -214,6 +216,8 @@ const
     '    I119 Исходный номер вызывающего абонента: %s',
     ' !! An unprocessed item is found and skipped: %u (0x%x) !!',
     ' !! Найден и пропущен необрабатываемый элемент: %u (0x%x) !!',
+    '    I121 Call release cause. Cause value (CV): %u. Location (LC): %u',
+    '    I121 Причина разъединения вызова. Код причины (CV): %u. Местонахождение (LC): %u', 
 
     'Warning',
     'Предупреждение',

@@ -28,6 +28,8 @@ const
   TARIFF_DIRECTION: string = 'I111_TD';
   CALL_DURATION: string = 'I115_DU';
   ORIGINAL_CALLING_NUMBER : string = 'I119_OCN';
+  CAUSE_VALUE: string = 'I121_CV';
+  LOCATION: string = 'I121_LO';
 
   AvgRecLength: Byte = 134;
 
@@ -57,6 +59,8 @@ type
       FIsTDExports: Boolean;  // TD - tariff direction
       FIsDUExports: Boolean;  // DU - call/service duration, sec.
       FIsOCNExports: Boolean; // OCN - original calling party number
+      FIsCVExports: Boolean; // Call release cause: CV - cause value
+      FIsLOExports: Boolean; // Call release cause: LO - location
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -107,6 +111,8 @@ type
       property IsTDExports: Boolean read FIsTDExports write FIsTDExports;
       property IsDUExports: Boolean read FIsDUExports write FIsDUExports;
       property IsOCNExports: Boolean read FIsOCNExports write FIsOCNExports;
+      property IsCVExports: Boolean read FIsCVExports write FIsCVExports;
+      property IsLOExports: Boolean read FIsLOExports write FIsLOExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -160,6 +166,8 @@ begin
     FIsTDExports := Ini.ReadBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, False);
     FIsDUExports := Ini.ReadBool(FIELDS_SECTION_NAME, CALL_DURATION, True);
     FIsOCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, False);
+    FIsCVExports := Ini.ReadBool(FIELDS_SECTION_NAME, CAUSE_VALUE, False);
+    FIsLOExports := Ini.ReadBool(FIELDS_SECTION_NAME, LOCATION, False);
   finally
     Ini.Free;
   end;
@@ -191,6 +199,8 @@ begin
     Ini.WriteBool(FIELDS_SECTION_NAME, TARIFF_DIRECTION, FIsTDExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CALL_DURATION, FIsDUExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, FIsOCNExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, CAUSE_VALUE, FIsCVExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, LOCATION, FIsLOExports);
   finally
     Ini.Free;
   end;
@@ -296,6 +306,14 @@ begin
       OneLine := OneLine + 'I111_TD' + ';';
     if IsDUExports then
       OneLine := OneLine + 'I115_DU' + ';';
+    if IsOCNExports then
+      OneLine := OneLine + 'I119_OCN' + ';';
+    if IsCVExports then
+    begin
+      OneLine := OneLine + 'I121_CV' + ';';
+      if IsLOExports then
+        OneLine := OneLine + 'I121_LO' + ';';
+    end;
 
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
@@ -677,9 +695,11 @@ begin
   end;
   if IsExportEnable then
     if IsDNExports then
+    begin
       if IsACExports then
         OneLine := OneLine + Copy(DN, 1, ACL) + ';';
       OneLine := OneLine + Copy(DN, ACL + 1, Length(DN) - ACL) + ';';
+    end;  
 
   { Working with dynamic part of the record }
 
@@ -908,21 +928,19 @@ begin
       115: // I115 DU - call/service duration  ($73)
       begin
         elementLen := 4;
+        // get DU in msec to SI variale
+        SI :=
+          (RecData[currOffset + 1] shl 24) +
+          (RecData[currOffset + 2] shl 16) +
+          (RecData[currOffset + 3] shl 8) +
+          (RecData[currOffset + 4]);
+        // msec -> sec
+        CI := SI mod 1000;
+        SI := SI div 1000;
+        if CI >= 500 then
+          Inc(SI);
         if LogLevel > 0 then
-        begin
-          // get DU in msec to SI variale
-          SI :=
-            (RecData[currOffset + 1] shl 24) +
-            (RecData[currOffset + 2] shl 16) +
-            (RecData[currOffset + 3] shl 8) +
-            (RecData[currOffset + 4]);
-          // msec -> sec
-          CI := SI mod 1000;
-          SI := SI div 1000;
-          if CI >= 500 then
-            Inc(SI);
           Log(Format(GetAMessage('I115_DU', lang), [SI]));
-        end;
         if IsExportEnable then
           if IsDUExports then
             OneLine := OneLine + IntToStr(SI) + ';';
@@ -997,7 +1015,26 @@ begin
         if LogLevel > 2 then
           Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
         currOffset := currOffset + elementLen;
-      end
+      end;
+
+      121: // I121 CRC - call release cause ($79)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I121_CRC', lang), [
+            (RecData[currOffset + 2] shl 8) + (RecData[currOffset + 3]),
+             RecData[currOffset + 4] and $0F
+          ]));
+        if IsExportEnable then
+          if IsCVExports then
+          begin
+            OneLine := OneLine + IntToStr((RecData[currOffset + 2] shl 8) + (RecData[currOffset + 3])) + ';';
+            if IsLOExports then
+              OneLine := OneLine + IntToStr(RecData[currOffset + 4] and $0F) + ';';
+          end;
+
+        currOffset := currOffset + elementLen;
+      end;
 
 
       else

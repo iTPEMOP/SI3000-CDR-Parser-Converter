@@ -39,6 +39,8 @@ type
     btnClearAll: TButton;
     chkDU: TCheckBox;
     chkOCN: TCheckBox;
+    chkCV: TCheckBox;
+    chkLO: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
@@ -47,6 +49,7 @@ type
     procedure chkBSClick(Sender: TObject);
     procedure btnClearAllClick(Sender: TObject);
     procedure btnDefaultClick(Sender: TObject);
+    procedure chkCVClick(Sender: TObject);
   private
     procedure InitInterface;
     procedure LoadSettings;
@@ -126,6 +129,7 @@ begin
 
   chkAC.Enabled := chkDN.Checked;
   chkTS.Enabled := chkBS.Checked;
+  chkLO.Enabled := chkCV.Checked;
 end;
 
 procedure TfrmSettings.FormKeyPress(Sender: TObject; var Key: Char);
@@ -262,6 +266,8 @@ begin
     chkTD.Checked := parser.IsTDExports;
     chkDU.Checked := parser.IsDUExports;
     chkOCN.Checked := parser.IsOCNExports;
+    chkCV.Checked := parser.IsCVExports;
+    chkLO.Checked := parser.IsLOExports;
   finally
     parser.Free;
   end;
@@ -300,6 +306,8 @@ begin
     parser.IsTDExports := chkTD.Checked;
     parser.IsDUExports := chkDU.Checked;
     parser.IsOCNExports := chkOCN.Checked;
+    parser.IsCVExports := chkCV.Checked;
+    parser.IsLOExports := chkLO.Checked;
     parser.SaveParams;
   finally
     parser.Free;
@@ -360,6 +368,13 @@ begin
   chkDN.Checked := True;
   chkCN.Checked := True;
   chkSD.Checked := True;
+end;
+
+procedure TfrmSettings.chkCVClick(Sender: TObject);
+begin
+  chkLO.Enabled := chkCV.Checked;
+  if not chkCV.Checked then
+    chkLO.Checked := False;
 end;
 
 end.
