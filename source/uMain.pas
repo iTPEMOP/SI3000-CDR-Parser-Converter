@@ -379,7 +379,22 @@ begin
       IniFile.WriteString('en', 'frmSettings_chkLO_Caption', 'I121 LO - location');
     if not IniFile.ValueExists('ru', 'frmSettings_chkLO_Caption') then
       IniFile.WriteString('ru', 'frmSettings_chkLO_Caption', 'I121 LO - местоположение');
-
+    if not IniFile.ValueExists('en', 'frmSettings_chkOSR_IP_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkOSR_IP_Caption', 'I127 origin side remote IP');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkOSR_IP_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkOSR_IP_Caption', 'I127 исходящий удаленный IP');
+    if not IniFile.ValueExists('en', 'frmSettings_chkOSL_IP_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkOSL_IP_Caption', 'I127 origin side local IP');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkOSL_IP_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkOSL_IP_Caption', 'I127 исходящий локальный IP');
+    if not IniFile.ValueExists('en', 'frmSettings_chkTSR_IP_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkTSR_IP_Caption', 'I127 terminating side remote IP');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkTSR_IP_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkTSR_IP_Caption', 'I127 входящий удаленный IP');
+    if not IniFile.ValueExists('en', 'frmSettings_chkTSL_IP_Caption') then
+      IniFile.WriteString('en', 'frmSettings_chkTSL_IP_Caption', 'I127 terminating side local IP');
+    if not IniFile.ValueExists('ru', 'frmSettings_chkTSL_IP_Caption') then
+      IniFile.WriteString('ru', 'frmSettings_chkTSL_IP_Caption', 'I127 входящий локальный IP');
 
 
     if not IniFile.ValueExists('en', 'frmSettings_chkAC_Hint') then

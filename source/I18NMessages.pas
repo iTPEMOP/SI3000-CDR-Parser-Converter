@@ -3,7 +3,7 @@ unit I18NMessages;
 interface
 
 type
-  TMessagesCapacity = array[0..109] of string;
+  TMessagesCapacity = array[0..125] of string;
 
 const
   CONST_NAMES: TMessagesCapacity = (
@@ -104,6 +104,22 @@ const
     'SKIPPED_ITEM_IS_FOUND_ru',
     'I121_CRC_en',
     'I121_CRC_ru',
+    'I122_CBN_en',
+    'I122_CBN_ru',
+    'I123_CCID_en',
+    'I123_CCID_ru',
+    'I124_DBA_en',
+    'I124_DBA_ru',
+    'I127_IPA_en',
+    'I127_IPA_ru',
+    'I128_VOIP_en',
+    'I128_VOIP_ru',
+    'I129_ATD_en',
+    'I129_ATD_ru',
+    'I134_ASD_en',
+    'I134_ASD_ru',
+    'UNKNOWN_ITEM_IS_FOUND_en',
+    'UNKNOWN_ITEM_IS_FOUND_ru',
 
   { Warnings }
     'WARNING_en',
@@ -206,8 +222,8 @@ const
     '    I114 OTD - ID исходящей соединительной линии. TG (ID группы): %u, TI (ID линии): %u, MI (ID модуля): %u, PI (ID порта): %u, CI (ID канала): %u',
     '    I115 DU - call/supplementary service duration (sec): %u',
     '    I115 DU - продолжительность вызова или время пользования услугой (сек.): %u',
-    '    I116 Checksum: %u',
-    '    I116 Контрольная сумма: %u',
+    '    I116 Checksum. Last two bytes: %s %s',
+    '    I116 Контрольная сумма. Последние два байта: %s %s',
     '    I117 Business and Centrex group ID.  Business group ID (BGID): %u. Centrex group ID (CGID): %u',
     '    I117 ID бизнес и центрекс групп.  Бизнес-групп ID (BGID): %u. Центрекс-групп IDy (CGID): %u',
     '    I118 Carrier access code (CAC). CAC Type: %u. CAC Prefix: %u. CAC Number: %s',
@@ -217,7 +233,23 @@ const
     ' !! An unprocessed item is found and skipped: %u (0x%x) !!',
     ' !! Найден и пропущен необрабатываемый элемент: %u (0x%x) !!',
     '    I121 Call release cause. Cause value (CV): %u. Location (LC): %u',
-    '    I121 Причина разъединения вызова. Код причины (CV): %u. Местонахождение (LC): %u', 
+    '    I121 Причина разъединения вызова. Код причины (CV): %u. Местонахождение (LC): %u',
+    '    I122 Charge band number. CNBO: %u, FL: %u',
+    '    I122 Номер тарифного направления. CNBO: %u, FL: %u',
+    '    I123 Common call ID: %u',
+    '    I123 Общий идентифиратор вызова: %u',
+    '    I124 Duration bebore answer. Between seizure and addressing complete (SC): %u, between address complete and answer (CA): %u',
+    '    I124 Время до ответа. Между занятием и завершенем адресации (SC): %u, между завершением адресации и ответом (CA): %u',
+    '    I127 IP addesses. Origin side remote IP: %s. Origin side local IP: %s. Terminating side remote IP: %s. Terminating side local IP: $s',
+    '    I127 IP адреса. Исходящий удаленный IP: %s. Исходящий локальный IP: %s. Входящий удаленный IP: %s. Входящий локальный IP: %s',
+    '    I128 VoIP info. Rx codec (RC): %u. Tx codec (TC): %u. Rx packetisation period (RP): %u, Tx packetisation period (TP): %u. Rx band width (RB): %u. Tx band width (TB): %u. Max jitter buffer (JB), msec: %u. Call side (CS): %u. RTP payload type (PL): %u',
+    '    I128 VoIP инфо. Кодек R. (RC): %u. Кодек T. (TC): %u. Пер. пакет. R (RP): %u, Пер. пакет. T (TP): %u. Полоса проп. R (RB): %u. Полоса проп. T (TB): %u. Max буфер (JB), мсек: %u. Сторона (CS): %u. Тип VoIP-вызова (PL): %u',
+    '    I129 Amount of transferred data. Side: %u. RP: %u. TP: %u. RO: %u. TO: %u. PL: %u. Avg. jitter: %u. Avg. latency, msec: %u',
+    '    I129 Объем переданных данных. Сторона: %u. RP: %u. TP: %u. RO: %u. TO: %u. PL: %u. Ср. задержка пакетов: %u. Ср. время задержки, мсек: %u',
+    '    I134 Additional Statistics Data. Calling SS Group: %u. Called SS Group: %u. Orig. side SND line type: %u. Term. side SND line type: %u',
+    '    I134 Дополнительные данные для статистики. Статгруппа вызывающего: %u. Статгруппа вызываемого: %u. SND тип вх. линии: %u. SND тип исх. линии: %u',
+    ' !! An unknown item is found: %u (0x%x). Skip this CRD record !!',
+    ' !! Найден неизвестный элемент: %u (0x%x). Эта CDR запись пропускается  !!',
 
     'Warning',
     'Предупреждение',

@@ -41,6 +41,10 @@ type
     chkOCN: TCheckBox;
     chkCV: TCheckBox;
     chkLO: TCheckBox;
+    chkOSR_IP: TCheckBox;
+    chkOSL_IP: TCheckBox;
+    chkTSR_IP: TCheckBox;
+    chkTSL_IP: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure chkExportCSVClick(Sender: TObject);
@@ -171,7 +175,7 @@ begin
       Items.Clear;
       Items.Add('Минимальный');
       Items.Add('Короткий');
-      Items.Add('Нормальный');
+      Items.Add('Обычный');
       Items.Add('Подробный');
     end;
   end;
@@ -268,6 +272,10 @@ begin
 //    chkOCN.Checked := parser.IsOCNExports;
     chkCV.Checked := parser.IsCVExports;
     chkLO.Checked := parser.IsLOExports;
+    chkOSR_IP.Checked := parser.IsOSR_IPExports;
+    chkOSL_IP.Checked := parser.IsOSL_IPExports;
+    chkTSR_IP.Checked := parser.IsTSR_IPExports;
+    chkTSL_IP.Checked := parser.IsTSL_IPExports;
   finally
     parser.Free;
   end;
@@ -308,6 +316,10 @@ begin
 //    parser.IsOCNExports := chkOCN.Checked;
     parser.IsCVExports := chkCV.Checked;
     parser.IsLOExports := chkLO.Checked;
+    parser.IsOSR_IPExports := chkOSR_IP.Checked;
+    parser.IsOSL_IPExports := chkOSL_IP.Checked;
+    parser.IsTSR_IPExports := chkTSR_IP.Checked;
+    parser.IsTSL_IPExports := chkTSL_IP.Checked;
     parser.SaveParams;
   finally
     parser.Free;
@@ -368,6 +380,7 @@ begin
   chkDN.Checked := True;
   chkCN.Checked := True;
   chkSD.Checked := True;
+  chkDU.Checked := True;
 end;
 
 procedure TfrmSettings.chkCVClick(Sender: TObject);

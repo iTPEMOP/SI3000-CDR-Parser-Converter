@@ -30,6 +30,10 @@ const
 //  ORIGINAL_CALLING_NUMBER : string = 'I119_OCN';
   CAUSE_VALUE: string = 'I121_CV';
   LOCATION: string = 'I121_LO';
+  OSR_IP: string = 'I127_OSR_IP';
+  OSL_IP: string = 'I127_OSL_IP';
+  TSR_IP: string = 'I127_TSR_IP';
+  TSL_IP: string = 'I127_TSL_IP';
 
   AvgRecLength: Byte = 134;
 
@@ -61,6 +65,10 @@ type
 //      FIsOCNExports: Boolean; // OCN - original calling party number
       FIsCVExports: Boolean; // Call release cause: CV - cause value
       FIsLOExports: Boolean; // Call release cause: LO - location
+      FIsOSR_IPExports: Boolean; // origin side remote RTP IP
+      FIsOSL_IPExports: Boolean; // origin side local RTP IP
+      FIsTSR_IPExports: Boolean; // terminating side remote RTP IP
+      FIsTSL_IPExports: Boolean; // terminating side local RTP IP
       FLogLevel: Byte; // 0 - none, 1 - min, 2 - normal, 3 - full
 
       FFileName: string;
@@ -113,6 +121,10 @@ type
 //      property IsOCNExports: Boolean read FIsOCNExports write FIsOCNExports;
       property IsCVExports: Boolean read FIsCVExports write FIsCVExports;
       property IsLOExports: Boolean read FIsLOExports write FIsLOExports;
+      property IsOSR_IPExports: Boolean read FIsOSR_IPExports write FIsOSR_IPExports;
+      property IsOSL_IPExports: Boolean read FIsOSL_IPExports write FIsOSL_IPExports;
+      property IsTSR_IPExports: Boolean read FIsTSR_IPExports write FIsTSR_IPExports;
+      property IsTSL_IPExports: Boolean read FIsTSL_IPExports write FIsTSL_IPExports;
 
       property RecCount: Integer read FRecCount;
       property Progress: Integer read FProgress;
@@ -168,6 +180,10 @@ begin
 //    FIsOCNExports := Ini.ReadBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, False);
     FIsCVExports := Ini.ReadBool(FIELDS_SECTION_NAME, CAUSE_VALUE, False);
     FIsLOExports := Ini.ReadBool(FIELDS_SECTION_NAME, LOCATION, False);
+    FIsOSR_IPExports := Ini.ReadBool(FIELDS_SECTION_NAME, OSR_IP, False);
+    FIsOSL_IPExports := Ini.ReadBool(FIELDS_SECTION_NAME, OSL_IP, False);
+    FIsTSR_IPExports := Ini.ReadBool(FIELDS_SECTION_NAME, TSR_IP, False);
+    FIsTSL_IPExports := Ini.ReadBool(FIELDS_SECTION_NAME, TSL_IP, False);
   finally
     Ini.Free;
   end;
@@ -201,6 +217,10 @@ begin
 //    Ini.WriteBool(FIELDS_SECTION_NAME, ORIGINAL_CALLING_NUMBER, FIsOCNExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, CAUSE_VALUE, FIsCVExports);
     Ini.WriteBool(FIELDS_SECTION_NAME, LOCATION, FIsLOExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, OSR_IP, FIsOSR_IPExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, OSL_IP, FIsOSR_IPExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, TSR_IP, FIsTSR_IPExports);
+    Ini.WriteBool(FIELDS_SECTION_NAME, TSL_IP, FIsTSR_IPExports);
   finally
     Ini.Free;
   end;
@@ -314,6 +334,14 @@ begin
       if IsLOExports then
         OneLine := OneLine + 'I121_LO' + ';';
     end;
+    if IsOSR_IPExports then
+      OneLine := OneLine + 'I127_OSR_IP' + ';';
+    if IsOSL_IPExports then
+      OneLine := OneLine + 'I127_OSL_IP' + ';';
+    if IsTSR_IPExports then
+      OneLine := OneLine + 'I127_TSR_IP' + ';';
+    if IsTSL_IPExports then
+      OneLine := OneLine + 'I127_TSL_IP' + ';';
 
     if Length(OneLine) > 1 then
       Delete(OneLine, Length(OneLine), 1);
@@ -605,6 +633,8 @@ var
   currOffset: Integer; // just remember RecData index
   elementID, elementLen: Integer; // elementLen keeps length in bytes without bytes before it (elementID, flags etc.)
   CN : string;
+  OR_IP, OL_IP, TR_IP, TL_IP: string;
+  ST1, ST2, ST3, ST4, localOffset: Word;
 
 begin
   if LogLevel > 0 then
@@ -952,7 +982,7 @@ begin
       begin
         elementLen := RecData[currOffset + 1];
         if LogLevel > 2 then
-          Log(Format(GetAMessage('I116_CS', lang), [(RecData[currOffset + 2] shl 8) + RecData[currOffset + 3]]));
+          Log(Format(GetAMessage('I116_CS', lang), [IntToHex(RecData[currOffset + 2], 2), IntToHex(RecData[currOffset + 3], 2)]));
 
         currOffset := currOffset + elementLen;
       end;
@@ -1037,9 +1067,261 @@ begin
         currOffset := currOffset + elementLen;
       end;
 
+      122: // I122 Charge Band Number ($7A)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I122_CBN', lang), [
+            (RecData[currOffset + 2] shl 8) + (RecData[currOffset + 3]),
+             RecData[currOffset + 4] and $01
+          ]));
 
+        currOffset := currOffset + elementLen;
+      end;
+
+      123: // I123 Common ñall ID ($7B)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I123_CCID', lang), [
+            (RecData[currOffset + 2] shl 24) +
+            (RecData[currOffset + 3] shl 16) +
+            (RecData[currOffset + 4] shl 8) +
+            (RecData[currOffset + 5])
+          ]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      124: // I124 Durations before answer ($7C)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I124_DBA', lang), [
+            (RecData[currOffset + 2] shl 24) +
+            (RecData[currOffset + 3] shl 16) +
+            (RecData[currOffset + 4] shl 8) +
+            (RecData[currOffset + 5]),
+            (RecData[currOffset + 6] shl 24) +
+            (RecData[currOffset + 7] shl 16) +
+            (RecData[currOffset + 8] shl 8) +
+            (RecData[currOffset + 9])
+          ]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      125: // I125 VoIP Info ($7D) - OLD
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + elementLen;
+      end;
+
+      126: // I126 Amount of transferred tata ($7E) - OLD
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + elementLen;
+      end;
+
+      127: // I127 IP Addresses ($7F)
+      begin
+        elementLen := RecData[currOffset + 1];
+        OR_IP := '';
+        OL_IP := '';
+        TR_IP := '';
+        TL_IP := '';
+        if (RecData[currOffset + 2] and $01) > 0 then
+          OR_IP := Format('%u.%u.%u.%u', [
+            RecData[currOffset + 4],
+            RecData[currOffset + 5],
+            RecData[currOffset + 6],
+            RecData[currOffset + 7]
+          ]);
+        if (RecData[currOffset + 2] and $02) > 0 then
+          OL_IP := Format('%u.%u.%u.%u', [
+            RecData[currOffset + 8],
+            RecData[currOffset + 9],
+            RecData[currOffset + 10],
+            RecData[currOffset + 11]
+          ]);
+        if (RecData[currOffset + 2] and $04) > 0 then
+          TR_IP := Format('%u.%u.%u.%u', [
+            RecData[currOffset + 12],
+            RecData[currOffset + 13],
+            RecData[currOffset + 14],
+            RecData[currOffset + 15]
+          ]);
+        if (RecData[currOffset + 2] and $08) > 0 then
+          TL_IP := Format('%u.%u.%u.%u', [
+            RecData[currOffset + 16],
+            RecData[currOffset + 17],
+            RecData[currOffset + 18],
+            RecData[currOffset + 19]
+          ]);
+        if LogLevel > 1 then
+          Log(Format(GetAMessage('I127_IPA', lang), [OR_IP, OL_IP, TR_IP, TL_IP]));
+
+        if IsExportEnable then
+        begin
+          if IsOSR_IPExports then
+            OneLine := OneLine + OR_IP + ';';
+          if IsOSL_IPExports then
+            OneLine := OneLine + OL_IP + ';';
+          if IsTSR_IPExports then
+            OneLine := OneLine + TR_IP + ';';
+          if IsTSL_IPExports then
+            OneLine := OneLine + TL_IP + ';';
+        end;
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      128: // I128 VoIP Info ($80)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I128_VOIP', lang), [
+            RecData[currOffset + 2],                                    // RC
+            RecData[currOffset + 3],                                    // TC
+            RecData[currOffset + 4],                                    // RP
+            RecData[currOffset + 5],                                    // TP
+            (RecData[currOffset + 6] shl 8) + RecData[currOffset + 7],  // RB
+            (RecData[currOffset + 8] shl 8) + RecData[currOffset + 9],  // TB
+            (RecData[currOffset + 10] shl 8) + RecData[currOffset + 11],// Max. buffer
+            RecData[currOffset + 12] shr 7,                             // Side
+            RecData[currOffset + 12] and $7F                            // VoIP type
+          ]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      129: // I129 Amount of Transferred Data ($81)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I129_ATD', lang), [
+            RecData[currOffset + 2],            // Side
+            (RecData[currOffset + 3] shr 24) +  // Rx packets
+            (RecData[currOffset + 4] shr 16) +
+            (RecData[currOffset + 5] shr 8) +
+            (RecData[currOffset + 6]),
+            (RecData[currOffset + 7] shr 24) +  // Tx packets
+            (RecData[currOffset + 8] shr 16) +
+            (RecData[currOffset + 9] shr 8) +
+            (RecData[currOffset + 10]),
+            (RecData[currOffset + 11] shr 24) +  // Rx octets
+            (RecData[currOffset + 12] shr 16) +
+            (RecData[currOffset + 13] shr 8) +
+            (RecData[currOffset + 14]),
+            (RecData[currOffset + 15] shr 24) +  // Tx octets
+            (RecData[currOffset + 16] shr 16) +
+            (RecData[currOffset + 17] shr 8) +
+            (RecData[currOffset + 18]),
+            (RecData[currOffset + 19] shr 24) +  // Packets lost
+            (RecData[currOffset + 20] shr 16) +
+            (RecData[currOffset + 21] shr 8) +
+            (RecData[currOffset + 22]),
+            RecData[currOffset + 23],            // Avg. jitter
+            RecData[currOffset + 24]            // Avg. latency
+          ]));
+        currOffset := currOffset + elementLen;
+      end;
+
+      130, // I130 Service Control Data ($82)
+      131, // I131 New destination number ($83)
+      132, // I132 QoS VoIP Data ($84)
+      133: // I133 Additional Centrex Data ($85)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + elementLen;
+      end;
+
+      134: // I134 Additional statistics data ($86)
+      begin
+        elementLen := RecData[currOffset + 1];
+        ST1 := 0;
+        ST2 := 0;
+        ST3 := 0;
+        ST4 := 0;
+        localOffset := 0;
+
+        // Calling SS Group
+        if (RecData[currOffset + 2] and $01) > 0 then
+        begin
+          ST1 := (RecData[currOffset + 3] shl 8) + (RecData[currOffset + 3]);
+          localOffset := 2;
+        end;
+
+        // Called SS Group
+        if (RecData[currOffset + 2] and $02) > 0 then
+        begin
+          ST2 := (RecData[currOffset + localOffset + 3] shl 8) + (RecData[currOffset + localOffset + 3]);
+          localOffset := localOffset + 2;
+        end;
+
+        // Orig. Side SND Line Type
+        if (RecData[currOffset + 2] and $04) > 0 then
+        begin
+          ST3 := RecData[currOffset + localOffset + 3];
+          localOffset := localOffset + 1;
+        end;
+
+        // Term. Side SND Line Type
+        if (RecData[currOffset + 2] and $08) > 0 then
+        begin
+          ST4 := RecData[currOffset + localOffset + 3];
+          localOffset := localOffset + 1;
+        end;
+
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('I134_ASD', lang), [ST1, ST2, ST3, ST4]));
+
+        currOffset := currOffset + elementLen;
+      end;
+
+      135, // I135 IMS charging identifier ($87)
+      136, // I136 Inter Operator Identifiers ($88)
+      137, // I137 Supplementary service additional info ($89)
+      138, // I138 Calling Party Number ($8A)
+      139, // I139 Additional Calling Number ($8B)
+      140, // I140 Called Party Number ($8C)
+      141, // I141 Sent Called Party Number ($8D)
+      142, // I142 Third Party Number ($8E)
+      143, // I143 Redirecting Party Number ($8F)
+      144, // I144 Incoming Trunk Data - Name ($90)
+      145, // I145 Outgoing Trunk Data - Name ($91)
+      146, // I146 Node Info ($92)
+      147, // I147 Global Call Reference ($93)
+      148, // I148 MLPP Data ($94)
+      149, // I149 Customer Data ($95)
+      150, // I150 Received Called Party Number ($96)
+      151, // I151 Call Type ($97)
+      152, // I152 IN Service Data ($98)
+      153, // I153 URI – Uniform Resource Identifier ($99)
+      154, // I154 Free Format Operator Specific Data ($9A)
+
+      156, // I156 Additional Numbers ($9C)
+      157, // I157 SIP Data ($9D)
+      158, // I158 FMC (Fix Mobile Convergence) Data ($9E)
+      159, // I159 Centrex Numbers ($9F)
+      160: // I160 Time Zone ($100)
+      begin
+        elementLen := RecData[currOffset + 1];
+        if LogLevel > 2 then
+          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
+        currOffset := currOffset + elementLen;
+      end;
       else
+      begin
+        Log(Format(GetAMessage('UNKNOWN_ITEM_IS_FOUND', lang), [elementID, elementID]));
         currOffset := 250;
+      end;
     end;
   end;
 

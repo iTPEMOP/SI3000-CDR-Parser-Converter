@@ -106,7 +106,7 @@ object frmSettings: TfrmSettings
       Visible = False
       object chkDN: TCheckBox
         Left = 16
-        Top = 90
+        Top = 100
         Width = 240
         Height = 17
         Caption = 'DN -  directory number (owner number)'
@@ -115,7 +115,7 @@ object frmSettings: TfrmSettings
       end
       object chkCN: TCheckBox
         Left = 16
-        Top = 130
+        Top = 144
         Width = 240
         Height = 17
         Caption = 'I100 CN - called number'
@@ -123,7 +123,7 @@ object frmSettings: TfrmSettings
       end
       object chkSD: TCheckBox
         Left = 16
-        Top = 144
+        Top = 160
         Width = 240
         Height = 17
         Caption = 'I102 SD - start date and time'
@@ -131,7 +131,7 @@ object frmSettings: TfrmSettings
       end
       object chkED: TCheckBox
         Left = 16
-        Top = 158
+        Top = 176
         Width = 240
         Height = 17
         Caption = 'I103 ED - end date and time'
@@ -147,7 +147,7 @@ object frmSettings: TfrmSettings
       end
       object chkCI: TCheckBox
         Left = 16
-        Top = 34
+        Top = 36
         Width = 240
         Height = 17
         Caption = 'CI - call identifier (Call ID)'
@@ -155,7 +155,7 @@ object frmSettings: TfrmSettings
       end
       object chkFL: TCheckBox
         Left = 16
-        Top = 48
+        Top = 52
         Width = 240
         Height = 17
         Caption = 'FL - flags'
@@ -163,7 +163,7 @@ object frmSettings: TfrmSettings
       end
       object chkCS: TCheckBox
         Left = 16
-        Top = 76
+        Top = 84
         Width = 240
         Height = 17
         Caption = 'CS - charge status'
@@ -171,7 +171,7 @@ object frmSettings: TfrmSettings
       end
       object chkSQ: TCheckBox
         Left = 16
-        Top = 62
+        Top = 68
         Width = 240
         Height = 17
         Caption = 'SQ - record sequence'
@@ -179,7 +179,7 @@ object frmSettings: TfrmSettings
       end
       object chkAC: TCheckBox
         Left = 28
-        Top = 104
+        Top = 116
         Width = 240
         Height = 17
         Hint = 'Include owner area code as a separate field'
@@ -188,7 +188,7 @@ object frmSettings: TfrmSettings
       end
       object chkCU: TCheckBox
         Left = 16
-        Top = 172
+        Top = 192
         Width = 240
         Height = 17
         Caption = 'I104 CU - charging units'
@@ -196,7 +196,7 @@ object frmSettings: TfrmSettings
       end
       object chkBS: TCheckBox
         Left = 16
-        Top = 186
+        Top = 208
         Width = 240
         Height = 17
         Caption = 'I105 BS - basic service'
@@ -205,7 +205,7 @@ object frmSettings: TfrmSettings
       end
       object chkTS: TCheckBox
         Left = 28
-        Top = 200
+        Top = 224
         Width = 240
         Height = 17
         Caption = 'I105 TS - teleservice'
@@ -213,7 +213,7 @@ object frmSettings: TfrmSettings
       end
       object chkOC: TCheckBox
         Left = 16
-        Top = 214
+        Top = 240
         Width = 240
         Height = 17
         Caption = 'I110 OC - origin category'
@@ -221,7 +221,7 @@ object frmSettings: TfrmSettings
       end
       object chkTD: TCheckBox
         Left = 16
-        Top = 228
+        Top = 256
         Width = 240
         Height = 17
         Caption = 'I111 TD - tariff direction'
@@ -233,7 +233,7 @@ object frmSettings: TfrmSettings
         Width = 95
         Height = 25
         Caption = 'Set default'
-        TabOrder = 18
+        TabOrder = 23
         OnClick = btnDefaultClick
       end
       object btnClearAll: TButton
@@ -242,12 +242,12 @@ object frmSettings: TfrmSettings
         Width = 95
         Height = 25
         Caption = 'Clear all'
-        TabOrder = 19
+        TabOrder = 24
         OnClick = btnClearAllClick
       end
       object chkDU: TCheckBox
         Left = 16
-        Top = 242
+        Top = 272
         Width = 561
         Height = 17
         Caption = 'I115 DU - call/service duration, sec.'
@@ -255,7 +255,7 @@ object frmSettings: TfrmSettings
       end
       object chkOCN: TCheckBox
         Left = 16
-        Top = 256
+        Top = 288
         Width = 561
         Height = 17
         Caption = 'I119 OCN - original calling party number'
@@ -273,11 +273,47 @@ object frmSettings: TfrmSettings
       end
       object chkLO: TCheckBox
         Left = 308
-        Top = 34
+        Top = 36
         Width = 273
         Height = 17
         Caption = 'I121 LO location'
+        TabOrder = 18
+      end
+      object chkOSR_IP: TCheckBox
+        Left = 296
+        Top = 52
+        Width = 289
+        Height = 17
+        Caption = 'I127 origin side remote IP'
+        TabOrder = 19
+        OnClick = chkCVClick
+      end
+      object chkOSL_IP: TCheckBox
+        Left = 296
+        Top = 68
+        Width = 289
+        Height = 17
+        Caption = 'I127 origin side local IP'
         TabOrder = 20
+        OnClick = chkCVClick
+      end
+      object chkTSR_IP: TCheckBox
+        Left = 296
+        Top = 84
+        Width = 289
+        Height = 17
+        Caption = 'I127 teminating side remote IP'
+        TabOrder = 21
+        OnClick = chkCVClick
+      end
+      object chkTSL_IP: TCheckBox
+        Left = 296
+        Top = 100
+        Width = 289
+        Height = 17
+        Caption = 'I127 teminating side local IP'
+        TabOrder = 22
+        OnClick = chkCVClick
       end
     end
   end
