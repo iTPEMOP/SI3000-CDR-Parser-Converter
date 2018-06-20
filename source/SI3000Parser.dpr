@@ -11,6 +11,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'SI3000 Parser & Converter';
   Application.CreateForm(TfrmMain, frmMain);
   Application.Run;
 end.
