@@ -628,7 +628,7 @@ var
   FL: string;
   SQ, CS: Byte;
   ACL, DNL: Byte;
-  AC_DN_len: Integer; // Owner's area code + derectiry number length
+  AC_DN_len: Integer; // Owner's area code + directory number length
   DN: string;
   currOffset: Integer; // just remember RecData index
   elementID, elementLen: Integer; // elementLen keeps length in bytes without bytes before it (elementID, flags etc.)
@@ -1111,14 +1111,7 @@ begin
         currOffset := currOffset + elementLen;
       end;
 
-      125: // I125 VoIP Info ($7D) - OLD
-      begin
-        elementLen := RecData[currOffset + 1];
-        if LogLevel > 2 then
-          Log(Format(GetAMessage('SKIPPED_ITEM_IS_FOUND', lang), [elementID, elementID]));
-        currOffset := currOffset + elementLen;
-      end;
-
+      125, // I125 VoIP Info ($7D) - OLD
       126: // I126 Amount of transferred tata ($7E) - OLD
       begin
         elementLen := RecData[currOffset + 1];
@@ -1226,7 +1219,7 @@ begin
             (RecData[currOffset + 21] shr 8) +
             (RecData[currOffset + 22]),
             RecData[currOffset + 23],            // Avg. jitter
-            RecData[currOffset + 24]            // Avg. latency
+            RecData[currOffset + 24]             // Avg. latency
           ]));
         currOffset := currOffset + elementLen;
       end;
@@ -1324,9 +1317,6 @@ begin
       end;
     end;
   end;
-
-
-
 
   if LogLevel > 0 then
     Log('-----------------------------------------------------------------');
